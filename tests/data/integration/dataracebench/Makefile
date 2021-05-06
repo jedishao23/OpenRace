@@ -1,6 +1,6 @@
 CC=clang
 CXX=clang++
-FLAGS=-g -fno-discard-value-names -fopenmp -S -emit-llvm
+FLAGS=-g -O1 -mllvm -disable-llvm-optzns -fno-discard-value-names -fopenmp -S -emit-llvm
 
 C_SRC=$(wildcard *.c)
 C_OUT=$(C_SRC:.c=.ll)

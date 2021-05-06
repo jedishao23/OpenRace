@@ -1,11 +1,11 @@
 ; ModuleID = 'DRB106-taskwaitmissing-orig-yes.c'
 source_filename = "DRB106-taskwaitmissing-orig-yes.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
-target triple = "x86_64-unknown-linux-gnu"
+target triple = "x86_64-pc-linux-gnu"
 
 %struct.ident_t = type { i32, i32, i32, i32, i8* }
-%struct.anon = type { i32*, i32* }
-%struct.anon.0 = type { i32*, i32* }
+%struct.anon = type { i32* }
+%struct.anon.0 = type { i32* }
 %struct.kmp_task_t_with_privates = type { %struct.kmp_task_t, %struct..kmp_privates.t }
 %struct.kmp_task_t = type { i8*, i32 (i32, i8*)*, i32, %union.kmp_cmplrdata_t, %union.kmp_cmplrdata_t }
 %union.kmp_cmplrdata_t = type { i32 (i32, i8*)* }
@@ -13,558 +13,582 @@ target triple = "x86_64-unknown-linux-gnu"
 %struct.kmp_task_t_with_privates.1 = type { %struct.kmp_task_t, %struct..kmp_privates.t.2 }
 %struct..kmp_privates.t.2 = type { i32 }
 
-@.str = private unnamed_addr constant [23 x i8] c";unknown;unknown;0;0;;\00", align 1
-@0 = private unnamed_addr global %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([23 x i8], [23 x i8]* @.str, i32 0, i32 0) }, align 8
-@1 = private unnamed_addr constant [46 x i8] c";DRB106-taskwaitmissing-orig-yes.c;fib;60;1;;\00", align 1
+@0 = private unnamed_addr constant [46 x i8] c";DRB106-taskwaitmissing-orig-yes.c;fib;60;1;;\00", align 1
+@1 = private unnamed_addr constant %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([46 x i8], [46 x i8]* @0, i32 0, i32 0) }, align 8
 @2 = private unnamed_addr constant [46 x i8] c";DRB106-taskwaitmissing-orig-yes.c;fib;62;1;;\00", align 1
-@3 = private unnamed_addr constant [46 x i8] c";DRB106-taskwaitmissing-orig-yes.c;fib;72;1;;\00", align 1
-@4 = private unnamed_addr constant [47 x i8] c";DRB106-taskwaitmissing-orig-yes.c;main;81;4;;\00", align 1
+@3 = private unnamed_addr constant %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([46 x i8], [46 x i8]* @2, i32 0, i32 0) }, align 8
+@4 = private unnamed_addr constant [46 x i8] c";DRB106-taskwaitmissing-orig-yes.c;fib;72;1;;\00", align 1
+@5 = private unnamed_addr constant %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([46 x i8], [46 x i8]* @4, i32 0, i32 0) }, align 8
 @input = dso_local global i32 10, align 4, !dbg !0
-@5 = private unnamed_addr constant [47 x i8] c";DRB106-taskwaitmissing-orig-yes.c;main;79;1;;\00", align 1
-@.str.5 = private unnamed_addr constant [42 x i8] c"Fib(%d)=%d (correct answer should be 55)\0A\00", align 1
+@6 = private unnamed_addr constant [47 x i8] c";DRB106-taskwaitmissing-orig-yes.c;main;81;4;;\00", align 1
+@7 = private unnamed_addr constant %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([47 x i8], [47 x i8]* @6, i32 0, i32 0) }, align 8
+@8 = private unnamed_addr constant %struct.ident_t { i32 0, i32 322, i32 0, i32 0, i8* getelementptr inbounds ([47 x i8], [47 x i8]* @6, i32 0, i32 0) }, align 8
+@9 = private unnamed_addr constant [47 x i8] c";DRB106-taskwaitmissing-orig-yes.c;main;79;1;;\00", align 1
+@10 = private unnamed_addr constant %struct.ident_t { i32 0, i32 2, i32 0, i32 0, i8* getelementptr inbounds ([47 x i8], [47 x i8]* @9, i32 0, i32 0) }, align 8
+@.str = private unnamed_addr constant [42 x i8] c"Fib(%d)=%d (correct answer should be 55)\0A\00", align 1
 
-; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @fib(i32 %n) #0 !dbg !11 {
+; Function Attrs: nounwind sspstrong uwtable
+define dso_local i32 @fib(i32 %n) #0 !dbg !13 {
 entry:
   %retval = alloca i32, align 4
   %n.addr = alloca i32, align 4
   %i = alloca i32, align 4
   %j = alloca i32, align 4
   %agg.captured = alloca %struct.anon, align 8
-  %.kmpc_loc.addr = alloca %struct.ident_t, align 8
   %agg.captured1 = alloca %struct.anon.0, align 8
   %res = alloca i32, align 4
-  %0 = bitcast %struct.ident_t* %.kmpc_loc.addr to i8*
-  %1 = bitcast %struct.ident_t* @0 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %0, i8* align 8 %1, i64 24, i1 false)
-  %2 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @1, i32 0, i32 0), i8** %2, align 8
-  %3 = call i32 @__kmpc_global_thread_num(%struct.ident_t* %.kmpc_loc.addr)
-  store i32 %n, i32* %n.addr, align 4
-  call void @llvm.dbg.declare(metadata i32* %n.addr, metadata !15, metadata !DIExpression()), !dbg !16
-  %4 = load i32, i32* %n.addr, align 4, !dbg !17
-  %cmp = icmp ult i32 %4, 2, !dbg !19
-  br i1 %cmp, label %if.then, label %if.else, !dbg !20
+  %0 = call i32 @__kmpc_global_thread_num(%struct.ident_t* @1)
+  store i32 %n, i32* %n.addr, align 4, !tbaa !24
+  call void @llvm.dbg.declare(metadata i32* %n.addr, metadata !18, metadata !DIExpression()), !dbg !28
+  %1 = load i32, i32* %n.addr, align 4, !dbg !29, !tbaa !24
+  %cmp = icmp ult i32 %1, 2, !dbg !30
+  br i1 %cmp, label %if.then, label %if.else, !dbg !31
 
 if.then:                                          ; preds = %entry
-  %5 = load i32, i32* %n.addr, align 4, !dbg !21
-  store i32 %5, i32* %retval, align 4, !dbg !22
-  br label %return, !dbg !22
+  %2 = load i32, i32* %n.addr, align 4, !dbg !32, !tbaa !24
+  store i32 %2, i32* %retval, align 4, !dbg !33
+  br label %return, !dbg !33
 
 if.else:                                          ; preds = %entry
-  call void @llvm.dbg.declare(metadata i32* %i, metadata !23, metadata !DIExpression()), !dbg !25
-  call void @llvm.dbg.declare(metadata i32* %j, metadata !26, metadata !DIExpression()), !dbg !27
-  %6 = getelementptr inbounds %struct.anon, %struct.anon* %agg.captured, i32 0, i32 0, !dbg !28
-  store i32* %i, i32** %6, align 8, !dbg !28
-  %7 = getelementptr inbounds %struct.anon, %struct.anon* %agg.captured, i32 0, i32 1, !dbg !28
-  store i32* %n.addr, i32** %7, align 8, !dbg !28
-  %8 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !28
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @1, i32 0, i32 0), i8** %8, align 8, !dbg !28
-  %9 = call i8* @__kmpc_omp_task_alloc(%struct.ident_t* %.kmpc_loc.addr, i32 %3, i32 1, i64 48, i64 16, i32 (i32, i8*)* bitcast (i32 (i32, %struct.kmp_task_t_with_privates*)* @.omp_task_entry. to i32 (i32, i8*)*)), !dbg !28
-  %10 = bitcast i8* %9 to %struct.kmp_task_t_with_privates*, !dbg !28
-  %11 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %10, i32 0, i32 0, !dbg !28
-  %12 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %11, i32 0, i32 0, !dbg !28
-  %13 = load i8*, i8** %12, align 8, !dbg !28
-  %14 = bitcast %struct.anon* %agg.captured to i8*, !dbg !28
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %13, i8* align 8 %14, i64 16, i1 false), !dbg !28
-  %15 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %10, i32 0, i32 1, !dbg !28
-  %16 = bitcast i8* %13 to %struct.anon*, !dbg !28
-  %17 = getelementptr inbounds %struct..kmp_privates.t, %struct..kmp_privates.t* %15, i32 0, i32 0, !dbg !28
-  %18 = getelementptr inbounds %struct.anon, %struct.anon* %16, i32 0, i32 1, !dbg !28
-  %19 = load i32*, i32** %18, align 8, !dbg !28
-  %20 = load i32, i32* %19, align 4, !dbg !29
-  store i32 %20, i32* %17, align 8, !dbg !28
-  %21 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !28
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @1, i32 0, i32 0), i8** %21, align 8, !dbg !28
-  %22 = call i32 @__kmpc_omp_task(%struct.ident_t* %.kmpc_loc.addr, i32 %3, i8* %9), !dbg !28
-  %23 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %agg.captured1, i32 0, i32 0, !dbg !31
-  store i32* %j, i32** %23, align 8, !dbg !31
-  %24 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %agg.captured1, i32 0, i32 1, !dbg !31
-  store i32* %n.addr, i32** %24, align 8, !dbg !31
-  %25 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !31
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @2, i32 0, i32 0), i8** %25, align 8, !dbg !31
-  %26 = call i8* @__kmpc_omp_task_alloc(%struct.ident_t* %.kmpc_loc.addr, i32 %3, i32 1, i64 48, i64 16, i32 (i32, i8*)* bitcast (i32 (i32, %struct.kmp_task_t_with_privates.1*)* @.omp_task_entry..3 to i32 (i32, i8*)*)), !dbg !31
-  %27 = bitcast i8* %26 to %struct.kmp_task_t_with_privates.1*, !dbg !31
-  %28 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %27, i32 0, i32 0, !dbg !31
-  %29 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %28, i32 0, i32 0, !dbg !31
-  %30 = load i8*, i8** %29, align 8, !dbg !31
-  %31 = bitcast %struct.anon.0* %agg.captured1 to i8*, !dbg !31
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %30, i8* align 8 %31, i64 16, i1 false), !dbg !31
-  %32 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %27, i32 0, i32 1, !dbg !31
-  %33 = bitcast i8* %30 to %struct.anon.0*, !dbg !31
-  %34 = getelementptr inbounds %struct..kmp_privates.t.2, %struct..kmp_privates.t.2* %32, i32 0, i32 0, !dbg !31
-  %35 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %33, i32 0, i32 1, !dbg !31
-  %36 = load i32*, i32** %35, align 8, !dbg !31
-  %37 = load i32, i32* %36, align 4, !dbg !32
-  store i32 %37, i32* %34, align 8, !dbg !31
-  %38 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !31
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @2, i32 0, i32 0), i8** %38, align 8, !dbg !31
-  %39 = call i32 @__kmpc_omp_task(%struct.ident_t* %.kmpc_loc.addr, i32 %3, i8* %26), !dbg !31
-  call void @llvm.dbg.declare(metadata i32* %res, metadata !34, metadata !DIExpression()), !dbg !35
-  %40 = load i32, i32* %i, align 4, !dbg !36
-  %41 = load i32, i32* %j, align 4, !dbg !37
-  %add = add nsw i32 %40, %41, !dbg !38
-  store i32 %add, i32* %res, align 4, !dbg !35
-  %42 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !39
-  store i8* getelementptr inbounds ([46 x i8], [46 x i8]* @3, i32 0, i32 0), i8** %42, align 8, !dbg !39
-  %43 = call i32 @__kmpc_omp_taskwait(%struct.ident_t* %.kmpc_loc.addr, i32 %3), !dbg !39
-  %44 = load i32, i32* %res, align 4, !dbg !40
-  store i32 %44, i32* %retval, align 4, !dbg !41
-  br label %return, !dbg !41
+  %3 = bitcast i32* %i to i8*, !dbg !34
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %3) #5, !dbg !34
+  call void @llvm.dbg.declare(metadata i32* %i, metadata !19, metadata !DIExpression()), !dbg !35
+  %4 = bitcast i32* %j to i8*, !dbg !34
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %4) #5, !dbg !34
+  call void @llvm.dbg.declare(metadata i32* %j, metadata !22, metadata !DIExpression()), !dbg !36
+  %5 = getelementptr inbounds %struct.anon, %struct.anon* %agg.captured, i32 0, i32 0, !dbg !37
+  store i32* %i, i32** %5, align 8, !dbg !37, !tbaa !38
+  %6 = call i8* @__kmpc_omp_task_alloc(%struct.ident_t* @1, i32 %0, i32 1, i64 48, i64 8, i32 (i32, i8*)* bitcast (i32 (i32, %struct.kmp_task_t_with_privates*)* @.omp_task_entry. to i32 (i32, i8*)*)), !dbg !37
+  %7 = bitcast i8* %6 to %struct.kmp_task_t_with_privates*, !dbg !37
+  %8 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %7, i32 0, i32 0, !dbg !37
+  %9 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %8, i32 0, i32 0, !dbg !37
+  %10 = load i8*, i8** %9, align 8, !dbg !37, !tbaa !40
+  %11 = bitcast %struct.anon* %agg.captured to i8*, !dbg !37
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %10, i8* align 8 %11, i64 8, i1 false), !dbg !37, !tbaa.struct !44
+  %12 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %7, i32 0, i32 1, !dbg !37
+  %13 = getelementptr inbounds %struct..kmp_privates.t, %struct..kmp_privates.t* %12, i32 0, i32 0, !dbg !37
+  %14 = load i32, i32* %n.addr, align 4, !dbg !45, !tbaa !24
+  store i32 %14, i32* %13, align 8, !dbg !37, !tbaa !47
+  %15 = call i32 @__kmpc_omp_task(%struct.ident_t* @1, i32 %0, i8* %6), !dbg !37
+  %16 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %agg.captured1, i32 0, i32 0, !dbg !48
+  store i32* %j, i32** %16, align 8, !dbg !48, !tbaa !38
+  %17 = call i8* @__kmpc_omp_task_alloc(%struct.ident_t* @3, i32 %0, i32 1, i64 48, i64 8, i32 (i32, i8*)* bitcast (i32 (i32, %struct.kmp_task_t_with_privates.1*)* @.omp_task_entry..3 to i32 (i32, i8*)*)), !dbg !48
+  %18 = bitcast i8* %17 to %struct.kmp_task_t_with_privates.1*, !dbg !48
+  %19 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %18, i32 0, i32 0, !dbg !48
+  %20 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %19, i32 0, i32 0, !dbg !48
+  %21 = load i8*, i8** %20, align 8, !dbg !48, !tbaa !40
+  %22 = bitcast %struct.anon.0* %agg.captured1 to i8*, !dbg !48
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %21, i8* align 8 %22, i64 8, i1 false), !dbg !48, !tbaa.struct !44
+  %23 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %18, i32 0, i32 1, !dbg !48
+  %24 = getelementptr inbounds %struct..kmp_privates.t.2, %struct..kmp_privates.t.2* %23, i32 0, i32 0, !dbg !48
+  %25 = load i32, i32* %n.addr, align 4, !dbg !49, !tbaa !24
+  store i32 %25, i32* %24, align 8, !dbg !48, !tbaa !47
+  %26 = call i32 @__kmpc_omp_task(%struct.ident_t* @3, i32 %0, i8* %17), !dbg !48
+  %27 = bitcast i32* %res to i8*, !dbg !51
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %27) #5, !dbg !51
+  call void @llvm.dbg.declare(metadata i32* %res, metadata !23, metadata !DIExpression()), !dbg !52
+  %28 = load i32, i32* %i, align 4, !dbg !53, !tbaa !24
+  %29 = load i32, i32* %j, align 4, !dbg !54, !tbaa !24
+  %add = add nsw i32 %28, %29, !dbg !55
+  store i32 %add, i32* %res, align 4, !dbg !52, !tbaa !24
+  %30 = call i32 @__kmpc_omp_taskwait(%struct.ident_t* @5, i32 %0), !dbg !56
+  %31 = load i32, i32* %res, align 4, !dbg !57, !tbaa !24
+  store i32 %31, i32* %retval, align 4, !dbg !58
+  %32 = bitcast i32* %res to i8*, !dbg !59
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %32) #5, !dbg !59
+  %33 = bitcast i32* %j to i8*, !dbg !59
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %33) #5, !dbg !59
+  %34 = bitcast i32* %i to i8*, !dbg !59
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %34) #5, !dbg !59
+  br label %return
 
 return:                                           ; preds = %if.else, %if.then
-  %45 = load i32, i32* %retval, align 4, !dbg !42
-  ret i32 %45, !dbg !42
+  %35 = load i32, i32* %retval, align 4, !dbg !60
+  ret i32 %35, !dbg !60
 }
 
 ; Function Attrs: nounwind readnone speculatable willreturn
 declare void @llvm.dbg.declare(metadata, metadata, metadata) #1
 
-; Function Attrs: noinline nounwind uwtable
-define internal void @.omp_task_privates_map.(%struct..kmp_privates.t* noalias %0, i32** noalias %1) #2 !dbg !43 {
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #2
+
+; Function Attrs: alwaysinline nounwind sspstrong uwtable
+define internal void @.omp_outlined.(i32 %.global_tid., i32* noalias %.part_id., i8* noalias %.privates., void (i8*, ...)* noalias %.copy_fn., i8* %.task_t., %struct.anon* noalias %__context) #3 !dbg !61 {
+entry:
+  %.global_tid..addr = alloca i32, align 4
+  %.part_id..addr = alloca i32*, align 8
+  %.privates..addr = alloca i8*, align 8
+  %.copy_fn..addr = alloca void (i8*, ...)*, align 8
+  %.task_t..addr = alloca i8*, align 8
+  %__context.addr = alloca %struct.anon*, align 8
+  %.firstpriv.ptr.addr = alloca i32*, align 8
+  store i32 %.global_tid., i32* %.global_tid..addr, align 4, !tbaa !24
+  call void @llvm.dbg.declare(metadata i32* %.global_tid..addr, metadata !82, metadata !DIExpression()), !dbg !88
+  store i32* %.part_id., i32** %.part_id..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.part_id..addr, metadata !83, metadata !DIExpression()), !dbg !88
+  store i8* %.privates., i8** %.privates..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i8** %.privates..addr, metadata !84, metadata !DIExpression()), !dbg !88
+  store void (i8*, ...)* %.copy_fn., void (i8*, ...)** %.copy_fn..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata void (i8*, ...)** %.copy_fn..addr, metadata !85, metadata !DIExpression()), !dbg !88
+  store i8* %.task_t., i8** %.task_t..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i8** %.task_t..addr, metadata !86, metadata !DIExpression()), !dbg !88
+  store %struct.anon* %__context, %struct.anon** %__context.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct.anon** %__context.addr, metadata !87, metadata !DIExpression()), !dbg !88
+  %0 = load %struct.anon*, %struct.anon** %__context.addr, align 8, !dbg !89
+  %1 = load void (i8*, ...)*, void (i8*, ...)** %.copy_fn..addr, align 8, !dbg !89
+  %2 = load i8*, i8** %.privates..addr, align 8, !dbg !89
+  call void (i8*, ...) %1(i8* %2, i32** %.firstpriv.ptr.addr), !dbg !90
+  %3 = load i32*, i32** %.firstpriv.ptr.addr, align 8, !dbg !89
+  %4 = load i32, i32* %3, align 4, !dbg !91, !tbaa !24
+  %sub = sub i32 %4, 1, !dbg !92
+  %call = call i32 @fib(i32 %sub), !dbg !93
+  %5 = getelementptr inbounds %struct.anon, %struct.anon* %0, i32 0, i32 0, !dbg !89
+  %6 = load i32*, i32** %5, align 8, !dbg !89, !tbaa !94
+  store i32 %call, i32* %6, align 4, !dbg !96, !tbaa !24
+  ret void, !dbg !97
+}
+
+; Function Attrs: alwaysinline nounwind sspstrong uwtable
+define internal void @.omp_task_privates_map.(%struct..kmp_privates.t* noalias %0, i32** noalias %1) #3 !dbg !98 {
 entry:
   %.addr = alloca %struct..kmp_privates.t*, align 8
   %.addr1 = alloca i32**, align 8
-  store %struct..kmp_privates.t* %0, %struct..kmp_privates.t** %.addr, align 8
-  call void @llvm.dbg.declare(metadata %struct..kmp_privates.t** %.addr, metadata !45, metadata !DIExpression()), !dbg !50
-  store i32** %1, i32*** %.addr1, align 8
-  call void @llvm.dbg.declare(metadata i32*** %.addr1, metadata !51, metadata !DIExpression()), !dbg !50
-  %2 = load %struct..kmp_privates.t*, %struct..kmp_privates.t** %.addr, align 8, !dbg !56
-  %3 = getelementptr inbounds %struct..kmp_privates.t, %struct..kmp_privates.t* %2, i32 0, i32 0, !dbg !56
-  %4 = load i32**, i32*** %.addr1, align 8, !dbg !56
-  store i32* %3, i32** %4, align 8, !dbg !56
-  ret void, !dbg !56
+  store %struct..kmp_privates.t* %0, %struct..kmp_privates.t** %.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct..kmp_privates.t** %.addr, metadata !101, metadata !DIExpression()), !dbg !111
+  store i32** %1, i32*** %.addr1, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32*** %.addr1, metadata !106, metadata !DIExpression()), !dbg !111
+  %2 = load %struct..kmp_privates.t*, %struct..kmp_privates.t** %.addr, align 8, !dbg !112
+  %3 = getelementptr inbounds %struct..kmp_privates.t, %struct..kmp_privates.t* %2, i32 0, i32 0, !dbg !112
+  %4 = load i32**, i32*** %.addr1, align 8, !dbg !112
+  store i32* %3, i32** %4, align 8, !dbg !112, !tbaa !38
+  ret void, !dbg !112
 }
 
-; Function Attrs: noinline norecurse nounwind uwtable
-define internal i32 @.omp_task_entry.(i32 %0, %struct.kmp_task_t_with_privates* noalias %1) #3 !dbg !57 {
+; Function Attrs: norecurse nounwind sspstrong uwtable
+define internal i32 @.omp_task_entry.(i32 %0, %struct.kmp_task_t_with_privates* noalias %1) #4 !dbg !113 {
 entry:
-  %.global_tid..addr.i = alloca i32, align 4
-  call void @llvm.dbg.declare(metadata i32* %.global_tid..addr.i, metadata !58, metadata !DIExpression()), !dbg !79
-  %.part_id..addr.i = alloca i32*, align 8
-  call void @llvm.dbg.declare(metadata i32** %.part_id..addr.i, metadata !81, metadata !DIExpression()), !dbg !79
-  %.privates..addr.i = alloca i8*, align 8
-  call void @llvm.dbg.declare(metadata i8** %.privates..addr.i, metadata !82, metadata !DIExpression()), !dbg !79
-  %.copy_fn..addr.i = alloca void (i8*, ...)*, align 8
-  call void @llvm.dbg.declare(metadata void (i8*, ...)** %.copy_fn..addr.i, metadata !83, metadata !DIExpression()), !dbg !79
-  %.task_t..addr.i = alloca i8*, align 8
-  call void @llvm.dbg.declare(metadata i8** %.task_t..addr.i, metadata !84, metadata !DIExpression()), !dbg !79
-  %__context.addr.i = alloca %struct.anon*, align 8
-  call void @llvm.dbg.declare(metadata %struct.anon** %__context.addr.i, metadata !85, metadata !DIExpression()), !dbg !79
-  %.firstpriv.ptr.addr.i = alloca i32*, align 8
   %.addr = alloca i32, align 4
   %.addr1 = alloca %struct.kmp_task_t_with_privates*, align 8
-  store i32 %0, i32* %.addr, align 4
-  call void @llvm.dbg.declare(metadata i32* %.addr, metadata !86, metadata !DIExpression()), !dbg !87
-  store %struct.kmp_task_t_with_privates* %1, %struct.kmp_task_t_with_privates** %.addr1, align 8
-  call void @llvm.dbg.declare(metadata %struct.kmp_task_t_with_privates** %.addr1, metadata !88, metadata !DIExpression()), !dbg !87
-  %2 = load i32, i32* %.addr, align 4, !dbg !100
-  %3 = load %struct.kmp_task_t_with_privates*, %struct.kmp_task_t_with_privates** %.addr1, align 8, !dbg !100
-  %4 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %3, i32 0, i32 0, !dbg !100
-  %5 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 2, !dbg !100
-  %6 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 0, !dbg !100
-  %7 = load i8*, i8** %6, align 8, !dbg !100
-  %8 = bitcast i8* %7 to %struct.anon*, !dbg !100
-  %9 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %3, i32 0, i32 1, !dbg !100
-  %10 = bitcast %struct..kmp_privates.t* %9 to i8*, !dbg !100
-  %11 = bitcast %struct.kmp_task_t_with_privates* %3 to i8*, !dbg !100
-  store i32 %2, i32* %.global_tid..addr.i, align 4, !noalias !101
-  store i32* %5, i32** %.part_id..addr.i, align 8, !noalias !101
-  store i8* %10, i8** %.privates..addr.i, align 8, !noalias !101
-  store void (i8*, ...)* bitcast (void (%struct..kmp_privates.t*, i32**)* @.omp_task_privates_map. to void (i8*, ...)*), void (i8*, ...)** %.copy_fn..addr.i, align 8, !noalias !101
-  store i8* %11, i8** %.task_t..addr.i, align 8, !noalias !101
-  store %struct.anon* %8, %struct.anon** %__context.addr.i, align 8, !noalias !101
-  %12 = load %struct.anon*, %struct.anon** %__context.addr.i, align 8, !dbg !107, !noalias !101
-  %13 = load void (i8*, ...)*, void (i8*, ...)** %.copy_fn..addr.i, align 8, !dbg !107, !noalias !101
-  %14 = load i8*, i8** %.privates..addr.i, align 8, !dbg !107, !noalias !101
-  call void (i8*, ...) %13(i8* %14, i32** %.firstpriv.ptr.addr.i) #7, !dbg !108
-  %15 = load i32*, i32** %.firstpriv.ptr.addr.i, align 8, !dbg !107, !noalias !101
-  %16 = load i32, i32* %15, align 4, !dbg !109
-  %sub.i = sub i32 %16, 1, !dbg !110
-  %call.i = call i32 @fib(i32 %sub.i) #7, !dbg !111
-  %17 = getelementptr inbounds %struct.anon, %struct.anon* %12, i32 0, i32 0, !dbg !107
-  %18 = load i32*, i32** %17, align 8, !dbg !107
-  store i32 %call.i, i32* %18, align 4, !dbg !112
-  ret i32 0, !dbg !100
+  store i32 %0, i32* %.addr, align 4, !tbaa !24
+  call void @llvm.dbg.declare(metadata i32* %.addr, metadata !115, metadata !DIExpression()), !dbg !128
+  store %struct.kmp_task_t_with_privates* %1, %struct.kmp_task_t_with_privates** %.addr1, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct.kmp_task_t_with_privates** %.addr1, metadata !116, metadata !DIExpression()), !dbg !128
+  %2 = load i32, i32* %.addr, align 4, !dbg !129, !tbaa !24
+  %3 = load %struct.kmp_task_t_with_privates*, %struct.kmp_task_t_with_privates** %.addr1, align 8, !dbg !129
+  %4 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %3, i32 0, i32 0, !dbg !129
+  %5 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 2, !dbg !129
+  %6 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 0, !dbg !129
+  %7 = load i8*, i8** %6, align 8, !dbg !129, !tbaa !40
+  %8 = bitcast i8* %7 to %struct.anon*, !dbg !129
+  %9 = getelementptr inbounds %struct.kmp_task_t_with_privates, %struct.kmp_task_t_with_privates* %3, i32 0, i32 1, !dbg !129
+  %10 = bitcast %struct..kmp_privates.t* %9 to i8*, !dbg !129
+  %11 = bitcast %struct.kmp_task_t_with_privates* %3 to i8*, !dbg !129
+  call void @.omp_outlined.(i32 %2, i32* %5, i8* %10, void (i8*, ...)* bitcast (void (%struct..kmp_privates.t*, i32**)* @.omp_task_privates_map. to void (i8*, ...)*), i8* %11, %struct.anon* %8) #5, !dbg !129
+  ret i32 0, !dbg !129
 }
 
+; Function Attrs: nounwind
+declare i32 @__kmpc_global_thread_num(%struct.ident_t*) #5
+
+; Function Attrs: nounwind
+declare i8* @__kmpc_omp_task_alloc(%struct.ident_t*, i32, i32, i64, i64, i32 (i32, i8*)*) #5
+
 ; Function Attrs: argmemonly nounwind willreturn
-declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #4
+declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #2
 
-declare dso_local i32 @__kmpc_global_thread_num(%struct.ident_t*)
+; Function Attrs: nounwind
+declare i32 @__kmpc_omp_task(%struct.ident_t*, i32, i8*) #5
 
-declare dso_local i8* @__kmpc_omp_task_alloc(%struct.ident_t*, i32, i32, i64, i64, i32 (i32, i8*)*)
+; Function Attrs: alwaysinline nounwind sspstrong uwtable
+define internal void @.omp_outlined..1(i32 %.global_tid., i32* noalias %.part_id., i8* noalias %.privates., void (i8*, ...)* noalias %.copy_fn., i8* %.task_t., %struct.anon.0* noalias %__context) #3 !dbg !130 {
+entry:
+  %.global_tid..addr = alloca i32, align 4
+  %.part_id..addr = alloca i32*, align 8
+  %.privates..addr = alloca i8*, align 8
+  %.copy_fn..addr = alloca void (i8*, ...)*, align 8
+  %.task_t..addr = alloca i8*, align 8
+  %__context.addr = alloca %struct.anon.0*, align 8
+  %.firstpriv.ptr.addr = alloca i32*, align 8
+  store i32 %.global_tid., i32* %.global_tid..addr, align 4, !tbaa !24
+  call void @llvm.dbg.declare(metadata i32* %.global_tid..addr, metadata !138, metadata !DIExpression()), !dbg !144
+  store i32* %.part_id., i32** %.part_id..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.part_id..addr, metadata !139, metadata !DIExpression()), !dbg !144
+  store i8* %.privates., i8** %.privates..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i8** %.privates..addr, metadata !140, metadata !DIExpression()), !dbg !144
+  store void (i8*, ...)* %.copy_fn., void (i8*, ...)** %.copy_fn..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata void (i8*, ...)** %.copy_fn..addr, metadata !141, metadata !DIExpression()), !dbg !144
+  store i8* %.task_t., i8** %.task_t..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i8** %.task_t..addr, metadata !142, metadata !DIExpression()), !dbg !144
+  store %struct.anon.0* %__context, %struct.anon.0** %__context.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct.anon.0** %__context.addr, metadata !143, metadata !DIExpression()), !dbg !144
+  %0 = load %struct.anon.0*, %struct.anon.0** %__context.addr, align 8, !dbg !145
+  %1 = load void (i8*, ...)*, void (i8*, ...)** %.copy_fn..addr, align 8, !dbg !145
+  %2 = load i8*, i8** %.privates..addr, align 8, !dbg !145
+  call void (i8*, ...) %1(i8* %2, i32** %.firstpriv.ptr.addr), !dbg !146
+  %3 = load i32*, i32** %.firstpriv.ptr.addr, align 8, !dbg !145
+  %4 = load i32, i32* %3, align 4, !dbg !147, !tbaa !24
+  %sub = sub i32 %4, 2, !dbg !148
+  %call = call i32 @fib(i32 %sub), !dbg !149
+  %5 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %0, i32 0, i32 0, !dbg !145
+  %6 = load i32*, i32** %5, align 8, !dbg !145, !tbaa !94
+  store i32 %call, i32* %6, align 4, !dbg !150, !tbaa !24
+  ret void, !dbg !151
+}
 
-declare dso_local i32 @__kmpc_omp_task(%struct.ident_t*, i32, i8*)
-
-; Function Attrs: noinline nounwind uwtable
-define internal void @.omp_task_privates_map..2(%struct..kmp_privates.t.2* noalias %0, i32** noalias %1) #2 !dbg !113 {
+; Function Attrs: alwaysinline nounwind sspstrong uwtable
+define internal void @.omp_task_privates_map..2(%struct..kmp_privates.t.2* noalias %0, i32** noalias %1) #3 !dbg !152 {
 entry:
   %.addr = alloca %struct..kmp_privates.t.2*, align 8
   %.addr1 = alloca i32**, align 8
-  store %struct..kmp_privates.t.2* %0, %struct..kmp_privates.t.2** %.addr, align 8
-  call void @llvm.dbg.declare(metadata %struct..kmp_privates.t.2** %.addr, metadata !114, metadata !DIExpression()), !dbg !119
-  store i32** %1, i32*** %.addr1, align 8
-  call void @llvm.dbg.declare(metadata i32*** %.addr1, metadata !120, metadata !DIExpression()), !dbg !119
-  %2 = load %struct..kmp_privates.t.2*, %struct..kmp_privates.t.2** %.addr, align 8, !dbg !121
-  %3 = getelementptr inbounds %struct..kmp_privates.t.2, %struct..kmp_privates.t.2* %2, i32 0, i32 0, !dbg !121
-  %4 = load i32**, i32*** %.addr1, align 8, !dbg !121
-  store i32* %3, i32** %4, align 8, !dbg !121
-  ret void, !dbg !121
+  store %struct..kmp_privates.t.2* %0, %struct..kmp_privates.t.2** %.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct..kmp_privates.t.2** %.addr, metadata !154, metadata !DIExpression()), !dbg !160
+  store i32** %1, i32*** %.addr1, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32*** %.addr1, metadata !159, metadata !DIExpression()), !dbg !160
+  %2 = load %struct..kmp_privates.t.2*, %struct..kmp_privates.t.2** %.addr, align 8, !dbg !161
+  %3 = getelementptr inbounds %struct..kmp_privates.t.2, %struct..kmp_privates.t.2* %2, i32 0, i32 0, !dbg !161
+  %4 = load i32**, i32*** %.addr1, align 8, !dbg !161
+  store i32* %3, i32** %4, align 8, !dbg !161, !tbaa !38
+  ret void, !dbg !161
 }
 
-; Function Attrs: noinline norecurse nounwind uwtable
-define internal i32 @.omp_task_entry..3(i32 %0, %struct.kmp_task_t_with_privates.1* noalias %1) #3 !dbg !122 {
+; Function Attrs: norecurse nounwind sspstrong uwtable
+define internal i32 @.omp_task_entry..3(i32 %0, %struct.kmp_task_t_with_privates.1* noalias %1) #4 !dbg !162 {
 entry:
-  %.global_tid..addr.i = alloca i32, align 4
-  call void @llvm.dbg.declare(metadata i32* %.global_tid..addr.i, metadata !123, metadata !DIExpression()), !dbg !131
-  %.part_id..addr.i = alloca i32*, align 8
-  call void @llvm.dbg.declare(metadata i32** %.part_id..addr.i, metadata !133, metadata !DIExpression()), !dbg !131
-  %.privates..addr.i = alloca i8*, align 8
-  call void @llvm.dbg.declare(metadata i8** %.privates..addr.i, metadata !134, metadata !DIExpression()), !dbg !131
-  %.copy_fn..addr.i = alloca void (i8*, ...)*, align 8
-  call void @llvm.dbg.declare(metadata void (i8*, ...)** %.copy_fn..addr.i, metadata !135, metadata !DIExpression()), !dbg !131
-  %.task_t..addr.i = alloca i8*, align 8
-  call void @llvm.dbg.declare(metadata i8** %.task_t..addr.i, metadata !136, metadata !DIExpression()), !dbg !131
-  %__context.addr.i = alloca %struct.anon.0*, align 8
-  call void @llvm.dbg.declare(metadata %struct.anon.0** %__context.addr.i, metadata !137, metadata !DIExpression()), !dbg !131
-  %.firstpriv.ptr.addr.i = alloca i32*, align 8
   %.addr = alloca i32, align 4
   %.addr1 = alloca %struct.kmp_task_t_with_privates.1*, align 8
-  store i32 %0, i32* %.addr, align 4
-  call void @llvm.dbg.declare(metadata i32* %.addr, metadata !138, metadata !DIExpression()), !dbg !139
-  store %struct.kmp_task_t_with_privates.1* %1, %struct.kmp_task_t_with_privates.1** %.addr1, align 8
-  call void @llvm.dbg.declare(metadata %struct.kmp_task_t_with_privates.1** %.addr1, metadata !140, metadata !DIExpression()), !dbg !139
-  %2 = load i32, i32* %.addr, align 4, !dbg !147
-  %3 = load %struct.kmp_task_t_with_privates.1*, %struct.kmp_task_t_with_privates.1** %.addr1, align 8, !dbg !147
-  %4 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %3, i32 0, i32 0, !dbg !147
-  %5 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 2, !dbg !147
-  %6 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 0, !dbg !147
-  %7 = load i8*, i8** %6, align 8, !dbg !147
-  %8 = bitcast i8* %7 to %struct.anon.0*, !dbg !147
-  %9 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %3, i32 0, i32 1, !dbg !147
-  %10 = bitcast %struct..kmp_privates.t.2* %9 to i8*, !dbg !147
-  %11 = bitcast %struct.kmp_task_t_with_privates.1* %3 to i8*, !dbg !147
-  store i32 %2, i32* %.global_tid..addr.i, align 4, !noalias !148
-  store i32* %5, i32** %.part_id..addr.i, align 8, !noalias !148
-  store i8* %10, i8** %.privates..addr.i, align 8, !noalias !148
-  store void (i8*, ...)* bitcast (void (%struct..kmp_privates.t.2*, i32**)* @.omp_task_privates_map..2 to void (i8*, ...)*), void (i8*, ...)** %.copy_fn..addr.i, align 8, !noalias !148
-  store i8* %11, i8** %.task_t..addr.i, align 8, !noalias !148
-  store %struct.anon.0* %8, %struct.anon.0** %__context.addr.i, align 8, !noalias !148
-  %12 = load %struct.anon.0*, %struct.anon.0** %__context.addr.i, align 8, !dbg !154, !noalias !148
-  %13 = load void (i8*, ...)*, void (i8*, ...)** %.copy_fn..addr.i, align 8, !dbg !154, !noalias !148
-  %14 = load i8*, i8** %.privates..addr.i, align 8, !dbg !154, !noalias !148
-  call void (i8*, ...) %13(i8* %14, i32** %.firstpriv.ptr.addr.i) #7, !dbg !155
-  %15 = load i32*, i32** %.firstpriv.ptr.addr.i, align 8, !dbg !154, !noalias !148
-  %16 = load i32, i32* %15, align 4, !dbg !156
-  %sub.i = sub i32 %16, 2, !dbg !157
-  %call.i = call i32 @fib(i32 %sub.i) #7, !dbg !158
-  %17 = getelementptr inbounds %struct.anon.0, %struct.anon.0* %12, i32 0, i32 0, !dbg !154
-  %18 = load i32*, i32** %17, align 8, !dbg !154
-  store i32 %call.i, i32* %18, align 4, !dbg !159
-  ret i32 0, !dbg !147
+  store i32 %0, i32* %.addr, align 4, !tbaa !24
+  call void @llvm.dbg.declare(metadata i32* %.addr, metadata !164, metadata !DIExpression()), !dbg !172
+  store %struct.kmp_task_t_with_privates.1* %1, %struct.kmp_task_t_with_privates.1** %.addr1, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata %struct.kmp_task_t_with_privates.1** %.addr1, metadata !165, metadata !DIExpression()), !dbg !172
+  %2 = load i32, i32* %.addr, align 4, !dbg !173, !tbaa !24
+  %3 = load %struct.kmp_task_t_with_privates.1*, %struct.kmp_task_t_with_privates.1** %.addr1, align 8, !dbg !173
+  %4 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %3, i32 0, i32 0, !dbg !173
+  %5 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 2, !dbg !173
+  %6 = getelementptr inbounds %struct.kmp_task_t, %struct.kmp_task_t* %4, i32 0, i32 0, !dbg !173
+  %7 = load i8*, i8** %6, align 8, !dbg !173, !tbaa !40
+  %8 = bitcast i8* %7 to %struct.anon.0*, !dbg !173
+  %9 = getelementptr inbounds %struct.kmp_task_t_with_privates.1, %struct.kmp_task_t_with_privates.1* %3, i32 0, i32 1, !dbg !173
+  %10 = bitcast %struct..kmp_privates.t.2* %9 to i8*, !dbg !173
+  %11 = bitcast %struct.kmp_task_t_with_privates.1* %3 to i8*, !dbg !173
+  call void @.omp_outlined..1(i32 %2, i32* %5, i8* %10, void (i8*, ...)* bitcast (void (%struct..kmp_privates.t.2*, i32**)* @.omp_task_privates_map..2 to void (i8*, ...)*), i8* %11, %struct.anon.0* %8) #5, !dbg !173
+  ret i32 0, !dbg !173
 }
 
-declare dso_local i32 @__kmpc_omp_taskwait(%struct.ident_t*, i32)
+declare i32 @__kmpc_omp_taskwait(%struct.ident_t*, i32)
 
-; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main() #0 !dbg !160 {
+; Function Attrs: argmemonly nounwind willreturn
+declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #2
+
+; Function Attrs: nounwind sspstrong uwtable
+define dso_local i32 @main() #0 !dbg !174 {
 entry:
   %retval = alloca i32, align 4
   %result = alloca i32, align 4
-  %.kmpc_loc.addr = alloca %struct.ident_t, align 8
-  %0 = bitcast %struct.ident_t* %.kmpc_loc.addr to i8*
-  %1 = bitcast %struct.ident_t* @0 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %0, i8* align 8 %1, i64 24, i1 false)
   store i32 0, i32* %retval, align 4
-  call void @llvm.dbg.declare(metadata i32* %result, metadata !163, metadata !DIExpression()), !dbg !164
-  store i32 0, i32* %result, align 4, !dbg !164
-  %2 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !165
-  store i8* getelementptr inbounds ([47 x i8], [47 x i8]* @5, i32 0, i32 0), i8** %2, align 8, !dbg !165
-  call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* %.kmpc_loc.addr, i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* @.omp_outlined..4 to void (i32*, i32*, ...)*), i32* %result), !dbg !165
-  %3 = load i32, i32* @input, align 4, !dbg !166
-  %4 = load i32, i32* %result, align 4, !dbg !167
-  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([42 x i8], [42 x i8]* @.str.5, i64 0, i64 0), i32 %3, i32 %4), !dbg !168
-  ret i32 0, !dbg !169
+  %0 = bitcast i32* %result to i8*, !dbg !179
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %0) #5, !dbg !179
+  call void @llvm.dbg.declare(metadata i32* %result, metadata !178, metadata !DIExpression()), !dbg !180
+  store i32 0, i32* %result, align 4, !dbg !180, !tbaa !24
+  call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* @10, i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* @.omp_outlined..4 to void (i32*, i32*, ...)*), i32* %result), !dbg !181
+  %1 = load i32, i32* @input, align 4, !dbg !182, !tbaa !24
+  %2 = load i32, i32* %result, align 4, !dbg !183, !tbaa !24
+  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([42 x i8], [42 x i8]* @.str, i64 0, i64 0), i32 %1, i32 %2), !dbg !184
+  %3 = bitcast i32* %result to i8*, !dbg !185
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %3) #5, !dbg !185
+  ret i32 0, !dbg !186
 }
 
-; Function Attrs: noinline norecurse nounwind optnone uwtable
-define internal void @.omp_outlined._debug__(i32* noalias %.global_tid., i32* noalias %.bound_tid., i32* dereferenceable(4) %result) #5 !dbg !170 {
+; Function Attrs: norecurse nounwind sspstrong uwtable
+define internal void @.omp_outlined._debug__(i32* noalias %.global_tid., i32* noalias %.bound_tid., i32* nonnull align 4 dereferenceable(4) %result) #4 !dbg !187 {
 entry:
   %.global_tid..addr = alloca i32*, align 8
   %.bound_tid..addr = alloca i32*, align 8
   %result.addr = alloca i32*, align 8
-  %.kmpc_loc.addr = alloca %struct.ident_t, align 8
-  %0 = bitcast %struct.ident_t* %.kmpc_loc.addr to i8*
-  %1 = bitcast %struct.ident_t* @0 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %0, i8* align 8 %1, i64 24, i1 false)
-  store i32* %.global_tid., i32** %.global_tid..addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %.global_tid..addr, metadata !174, metadata !DIExpression()), !dbg !175
-  store i32* %.bound_tid., i32** %.bound_tid..addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %.bound_tid..addr, metadata !176, metadata !DIExpression()), !dbg !175
-  store i32* %result, i32** %result.addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %result.addr, metadata !177, metadata !DIExpression()), !dbg !178
-  %2 = load i32*, i32** %result.addr, align 8, !dbg !179
-  %3 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !180
-  store i8* getelementptr inbounds ([47 x i8], [47 x i8]* @4, i32 0, i32 0), i8** %3, align 8, !dbg !180
-  %4 = load i32*, i32** %.global_tid..addr, align 8, !dbg !180
-  %5 = load i32, i32* %4, align 4, !dbg !180
-  %6 = call i32 @__kmpc_single(%struct.ident_t* %.kmpc_loc.addr, i32 %5), !dbg !180
-  %7 = icmp ne i32 %6, 0, !dbg !180
-  br i1 %7, label %omp_if.then, label %omp_if.end, !dbg !180
+  store i32* %.global_tid., i32** %.global_tid..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.global_tid..addr, metadata !192, metadata !DIExpression()), !dbg !195
+  store i32* %.bound_tid., i32** %.bound_tid..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.bound_tid..addr, metadata !193, metadata !DIExpression()), !dbg !195
+  store i32* %result, i32** %result.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %result.addr, metadata !194, metadata !DIExpression()), !dbg !196
+  %0 = load i32*, i32** %result.addr, align 8, !dbg !197, !tbaa !38
+  %1 = load i32*, i32** %.global_tid..addr, align 8, !dbg !198
+  %2 = load i32, i32* %1, align 4, !dbg !198, !tbaa !24
+  %3 = call i32 @__kmpc_single(%struct.ident_t* @7, i32 %2), !dbg !198
+  %4 = icmp ne i32 %3, 0, !dbg !198
+  br i1 %4, label %omp_if.then, label %omp_if.end, !dbg !198
 
 omp_if.then:                                      ; preds = %entry
-  %8 = load i32, i32* @input, align 4, !dbg !182
-  %call = call i32 @fib(i32 %8), !dbg !185
-  store i32 %call, i32* %2, align 4, !dbg !186
-  call void @__kmpc_end_single(%struct.ident_t* %.kmpc_loc.addr, i32 %5), !dbg !187
-  br label %omp_if.end, !dbg !187
+  %5 = load i32, i32* @input, align 4, !dbg !200, !tbaa !24
+  %call = call i32 @fib(i32 %5), !dbg !203
+  store i32 %call, i32* %0, align 4, !dbg !204, !tbaa !24
+  call void @__kmpc_end_single(%struct.ident_t* @7, i32 %2), !dbg !205
+  br label %omp_if.end, !dbg !205
 
 omp_if.end:                                       ; preds = %omp_if.then, %entry
-  %9 = getelementptr inbounds %struct.ident_t, %struct.ident_t* %.kmpc_loc.addr, i32 0, i32 4, !dbg !188
-  store i8* getelementptr inbounds ([47 x i8], [47 x i8]* @4, i32 0, i32 0), i8** %9, align 8, !dbg !188
-  call void @__kmpc_barrier(%struct.ident_t* %.kmpc_loc.addr, i32 %5), !dbg !188
-  ret void, !dbg !189
+  call void @__kmpc_barrier(%struct.ident_t* @8, i32 %2), !dbg !206
+  ret void, !dbg !207
 }
 
-declare dso_local void @__kmpc_end_single(%struct.ident_t*, i32)
+; Function Attrs: nounwind
+declare void @__kmpc_end_single(%struct.ident_t*, i32) #5
 
-declare dso_local i32 @__kmpc_single(%struct.ident_t*, i32)
+; Function Attrs: nounwind
+declare i32 @__kmpc_single(%struct.ident_t*, i32) #5
 
-declare dso_local void @__kmpc_barrier(%struct.ident_t*, i32)
+declare void @__kmpc_barrier(%struct.ident_t*, i32)
 
-; Function Attrs: noinline norecurse nounwind optnone uwtable
-define internal void @.omp_outlined..4(i32* noalias %.global_tid., i32* noalias %.bound_tid., i32* dereferenceable(4) %result) #5 !dbg !190 {
+; Function Attrs: norecurse nounwind sspstrong uwtable
+define internal void @.omp_outlined..4(i32* noalias %.global_tid., i32* noalias %.bound_tid., i32* nonnull align 4 dereferenceable(4) %result) #4 !dbg !208 {
 entry:
   %.global_tid..addr = alloca i32*, align 8
   %.bound_tid..addr = alloca i32*, align 8
   %result.addr = alloca i32*, align 8
-  store i32* %.global_tid., i32** %.global_tid..addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %.global_tid..addr, metadata !191, metadata !DIExpression()), !dbg !192
-  store i32* %.bound_tid., i32** %.bound_tid..addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %.bound_tid..addr, metadata !193, metadata !DIExpression()), !dbg !192
-  store i32* %result, i32** %result.addr, align 8
-  call void @llvm.dbg.declare(metadata i32** %result.addr, metadata !194, metadata !DIExpression()), !dbg !192
-  %0 = load i32*, i32** %result.addr, align 8, !dbg !195
-  %1 = load i32*, i32** %.global_tid..addr, align 8, !dbg !195
-  %2 = load i32*, i32** %.bound_tid..addr, align 8, !dbg !195
-  %3 = load i32*, i32** %result.addr, align 8, !dbg !195
-  call void @.omp_outlined._debug__(i32* %1, i32* %2, i32* %3) #7, !dbg !195
-  ret void, !dbg !195
+  store i32* %.global_tid., i32** %.global_tid..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.global_tid..addr, metadata !210, metadata !DIExpression()), !dbg !213
+  store i32* %.bound_tid., i32** %.bound_tid..addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %.bound_tid..addr, metadata !211, metadata !DIExpression()), !dbg !213
+  store i32* %result, i32** %result.addr, align 8, !tbaa !38
+  call void @llvm.dbg.declare(metadata i32** %result.addr, metadata !212, metadata !DIExpression()), !dbg !213
+  %0 = load i32*, i32** %result.addr, align 8, !dbg !214, !tbaa !38
+  %1 = load i32*, i32** %.global_tid..addr, align 8, !dbg !214, !tbaa !38
+  %2 = load i32*, i32** %.bound_tid..addr, align 8, !dbg !214, !tbaa !38
+  %3 = load i32*, i32** %result.addr, align 8, !dbg !214, !tbaa !38
+  call void @.omp_outlined._debug__(i32* %1, i32* %2, i32* %3) #5, !dbg !214
+  ret void, !dbg !214
 }
 
-declare !callback !196 dso_local void @__kmpc_fork_call(%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...)
+; Function Attrs: nounwind
+declare !callback !215 void @__kmpc_fork_call(%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) #5
 
-declare dso_local i32 @printf(i8*, ...) #6
+declare i32 @printf(i8*, ...) #6
 
-attributes #0 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #0 = { nounwind sspstrong uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { nounwind readnone speculatable willreturn }
-attributes #2 = { noinline nounwind uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #3 = { noinline norecurse nounwind uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #4 = { argmemonly nounwind willreturn }
-attributes #5 = { noinline norecurse nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #6 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #7 = { nounwind }
+attributes #2 = { argmemonly nounwind willreturn }
+attributes #3 = { alwaysinline nounwind sspstrong uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #4 = { norecurse nounwind sspstrong uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #5 = { nounwind }
+attributes #6 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="none" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.dbg.cu = !{!2}
-!llvm.module.flags = !{!7, !8, !9}
-!llvm.ident = !{!10}
+!llvm.module.flags = !{!7, !8, !9, !10, !11}
+!llvm.ident = !{!12}
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "input", scope: !2, file: !3, line: 52, type: !6, isLocal: false, isDefinition: true)
-!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "clang version 10.0.1 ", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !5, splitDebugInlining: false, nameTableKind: None)
-!3 = !DIFile(filename: "DRB106-taskwaitmissing-orig-yes.c", directory: "/home/yanze/code/OpenRace/tests/data/integration/dataracebench")
+!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "clang version 11.1.0", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !5, splitDebugInlining: false, nameTableKind: None)
+!3 = !DIFile(filename: "DRB106-taskwaitmissing-orig-yes.c", directory: "/home/peiming/Documents/projects/OpenRace/tests/data/integration/dataracebench")
 !4 = !{}
 !5 = !{!0}
 !6 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
 !7 = !{i32 7, !"Dwarf Version", i32 4}
 !8 = !{i32 2, !"Debug Info Version", i32 3}
 !9 = !{i32 1, !"wchar_size", i32 4}
-!10 = !{!"clang version 10.0.1 "}
-!11 = distinct !DISubprogram(name: "fib", scope: !3, file: !3, line: 53, type: !12, scopeLine: 54, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!12 = !DISubroutineType(types: !13)
-!13 = !{!14, !6}
-!14 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
-!15 = !DILocalVariable(name: "n", arg: 1, scope: !11, file: !3, line: 53, type: !6)
-!16 = !DILocation(line: 53, column: 22, scope: !11)
-!17 = !DILocation(line: 55, column: 7, scope: !18)
-!18 = distinct !DILexicalBlock(scope: !11, file: !3, line: 55, column: 7)
-!19 = !DILocation(line: 55, column: 8, scope: !18)
-!20 = !DILocation(line: 55, column: 7, scope: !11)
-!21 = !DILocation(line: 56, column: 12, scope: !18)
-!22 = !DILocation(line: 56, column: 5, scope: !18)
-!23 = !DILocalVariable(name: "i", scope: !24, file: !3, line: 59, type: !14)
-!24 = distinct !DILexicalBlock(scope: !18, file: !3, line: 58, column: 3)
-!25 = !DILocation(line: 59, column: 9, scope: !24)
-!26 = !DILocalVariable(name: "j", scope: !24, file: !3, line: 59, type: !14)
-!27 = !DILocation(line: 59, column: 12, scope: !24)
-!28 = !DILocation(line: 60, column: 1, scope: !24)
-!29 = !DILocation(line: 61, column: 11, scope: !30)
-!30 = distinct !DILexicalBlock(scope: !24, file: !3, line: 60, column: 1)
-!31 = !DILocation(line: 62, column: 1, scope: !24)
-!32 = !DILocation(line: 63, column: 11, scope: !33)
-!33 = distinct !DILexicalBlock(scope: !24, file: !3, line: 62, column: 1)
-!34 = !DILocalVariable(name: "res", scope: !24, file: !3, line: 65, type: !14)
-!35 = !DILocation(line: 65, column: 9, scope: !24)
-!36 = !DILocation(line: 65, column: 14, scope: !24)
-!37 = !DILocation(line: 65, column: 16, scope: !24)
-!38 = !DILocation(line: 65, column: 15, scope: !24)
-!39 = !DILocation(line: 72, column: 1, scope: !24)
-!40 = !DILocation(line: 73, column: 12, scope: !24)
-!41 = !DILocation(line: 73, column: 5, scope: !24)
-!42 = !DILocation(line: 75, column: 1, scope: !11)
-!43 = distinct !DISubprogram(linkageName: ".omp_task_privates_map.", scope: !3, file: !3, line: 60, type: !44, scopeLine: 60, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!44 = !DISubroutineType(types: !4)
-!45 = !DILocalVariable(arg: 1, scope: !43, type: !46, flags: DIFlagArtificial)
-!46 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !47)
-!47 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !48)
-!48 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !49, size: 64)
-!49 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: ".kmp_privates.t", file: !3, size: 32, elements: !4)
-!50 = !DILocation(line: 0, scope: !43)
-!51 = !DILocalVariable(arg: 2, scope: !43, type: !52, flags: DIFlagArtificial)
-!52 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !53)
-!53 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !54)
-!54 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !55, size: 64)
-!55 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !6, size: 64)
-!56 = !DILocation(line: 60, column: 1, scope: !43)
-!57 = distinct !DISubprogram(linkageName: ".omp_task_entry.", scope: !3, file: !3, line: 60, type: !44, scopeLine: 60, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!58 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !59, type: !62, flags: DIFlagArtificial)
-!59 = distinct !DISubprogram(name: ".omp_outlined.", scope: !3, file: !3, line: 61, type: !60, scopeLine: 61, flags: DIFlagPrototyped, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!60 = !DISubroutineType(types: !61)
-!61 = !{null, !62, !63, !66, !69, !74, !75}
-!62 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !14)
-!63 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !64)
-!64 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !65)
-!65 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !62, size: 64)
-!66 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !67)
-!67 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !68)
-!68 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: null, size: 64)
-!69 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !70)
-!70 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !71)
-!71 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !72, size: 64)
-!72 = !DISubroutineType(types: !73)
-!73 = !{null, !66, null}
-!74 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !68)
-!75 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !76)
-!76 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !77)
-!77 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !78, size: 64)
-!78 = distinct !DICompositeType(tag: DW_TAG_structure_type, scope: !11, file: !3, line: 60, size: 128, elements: !4)
-!79 = !DILocation(line: 0, scope: !59, inlinedAt: !80)
-!80 = distinct !DILocation(line: 60, column: 1, scope: !57)
-!81 = !DILocalVariable(name: ".part_id.", arg: 2, scope: !59, type: !63, flags: DIFlagArtificial)
-!82 = !DILocalVariable(name: ".privates.", arg: 3, scope: !59, type: !66, flags: DIFlagArtificial)
-!83 = !DILocalVariable(name: ".copy_fn.", arg: 4, scope: !59, type: !69, flags: DIFlagArtificial)
-!84 = !DILocalVariable(name: ".task_t.", arg: 5, scope: !59, type: !74, flags: DIFlagArtificial)
-!85 = !DILocalVariable(name: "__context", arg: 6, scope: !59, type: !75, flags: DIFlagArtificial)
-!86 = !DILocalVariable(arg: 1, scope: !57, type: !14, flags: DIFlagArtificial)
-!87 = !DILocation(line: 0, scope: !57)
-!88 = !DILocalVariable(arg: 2, scope: !57, type: !89, flags: DIFlagArtificial)
-!89 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !90)
-!90 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !91, size: 64)
-!91 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t_with_privates", file: !3, size: 384, elements: !92)
-!92 = !{!93, !99}
-!93 = !DIDerivedType(tag: DW_TAG_member, scope: !91, file: !3, baseType: !94, size: 320)
-!94 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t", file: !3, size: 320, elements: !95)
-!95 = !{!96, !98}
-!96 = !DIDerivedType(tag: DW_TAG_member, scope: !94, file: !3, baseType: !97, size: 64, offset: 192)
-!97 = distinct !DICompositeType(tag: DW_TAG_union_type, name: "kmp_cmplrdata_t", file: !3, size: 64, elements: !4)
-!98 = !DIDerivedType(tag: DW_TAG_member, scope: !94, file: !3, baseType: !97, size: 64, offset: 256)
-!99 = !DIDerivedType(tag: DW_TAG_member, scope: !91, file: !3, baseType: !49, size: 32, offset: 320)
-!100 = !DILocation(line: 60, column: 1, scope: !57)
-!101 = !{!102, !104, !105, !106}
-!102 = distinct !{!102, !103, !".omp_outlined.: %.part_id."}
-!103 = distinct !{!103, !".omp_outlined."}
-!104 = distinct !{!104, !103, !".omp_outlined.: %.privates."}
-!105 = distinct !{!105, !103, !".omp_outlined.: %.copy_fn."}
-!106 = distinct !{!106, !103, !".omp_outlined.: %__context"}
-!107 = !DILocation(line: 61, column: 5, scope: !59, inlinedAt: !80)
-!108 = !DILocation(line: 60, column: 1, scope: !59, inlinedAt: !80)
-!109 = !DILocation(line: 61, column: 11, scope: !59, inlinedAt: !80)
-!110 = !DILocation(line: 61, column: 12, scope: !59, inlinedAt: !80)
-!111 = !DILocation(line: 61, column: 7, scope: !59, inlinedAt: !80)
-!112 = !DILocation(line: 61, column: 6, scope: !59, inlinedAt: !80)
-!113 = distinct !DISubprogram(linkageName: ".omp_task_privates_map..2", scope: !3, file: !3, line: 62, type: !44, scopeLine: 62, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!114 = !DILocalVariable(arg: 1, scope: !113, type: !115, flags: DIFlagArtificial)
-!115 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !116)
-!116 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !117)
-!117 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !118, size: 64)
-!118 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: ".kmp_privates.t", file: !3, size: 32, elements: !4)
-!119 = !DILocation(line: 0, scope: !113)
-!120 = !DILocalVariable(arg: 2, scope: !113, type: !52, flags: DIFlagArtificial)
-!121 = !DILocation(line: 62, column: 1, scope: !113)
-!122 = distinct !DISubprogram(linkageName: ".omp_task_entry..3", scope: !3, file: !3, line: 62, type: !44, scopeLine: 62, flags: DIFlagArtificial, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!123 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !124, type: !62, flags: DIFlagArtificial)
-!124 = distinct !DISubprogram(name: ".omp_outlined..1", scope: !3, file: !3, line: 63, type: !125, scopeLine: 63, flags: DIFlagPrototyped, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!125 = !DISubroutineType(types: !126)
-!126 = !{null, !62, !63, !66, !69, !74, !127}
-!127 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !128)
-!128 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !129)
-!129 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !130, size: 64)
-!130 = distinct !DICompositeType(tag: DW_TAG_structure_type, scope: !11, file: !3, line: 62, size: 128, elements: !4)
-!131 = !DILocation(line: 0, scope: !124, inlinedAt: !132)
-!132 = distinct !DILocation(line: 62, column: 1, scope: !122)
-!133 = !DILocalVariable(name: ".part_id.", arg: 2, scope: !124, type: !63, flags: DIFlagArtificial)
-!134 = !DILocalVariable(name: ".privates.", arg: 3, scope: !124, type: !66, flags: DIFlagArtificial)
-!135 = !DILocalVariable(name: ".copy_fn.", arg: 4, scope: !124, type: !69, flags: DIFlagArtificial)
-!136 = !DILocalVariable(name: ".task_t.", arg: 5, scope: !124, type: !74, flags: DIFlagArtificial)
-!137 = !DILocalVariable(name: "__context", arg: 6, scope: !124, type: !127, flags: DIFlagArtificial)
-!138 = !DILocalVariable(arg: 1, scope: !122, type: !14, flags: DIFlagArtificial)
-!139 = !DILocation(line: 0, scope: !122)
-!140 = !DILocalVariable(arg: 2, scope: !122, type: !141, flags: DIFlagArtificial)
-!141 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !142)
-!142 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !143, size: 64)
-!143 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t_with_privates", file: !3, size: 384, elements: !144)
-!144 = !{!145, !146}
-!145 = !DIDerivedType(tag: DW_TAG_member, scope: !143, file: !3, baseType: !94, size: 320)
-!146 = !DIDerivedType(tag: DW_TAG_member, scope: !143, file: !3, baseType: !118, size: 32, offset: 320)
-!147 = !DILocation(line: 62, column: 1, scope: !122)
-!148 = !{!149, !151, !152, !153}
-!149 = distinct !{!149, !150, !".omp_outlined..1: %.part_id."}
-!150 = distinct !{!150, !".omp_outlined..1"}
-!151 = distinct !{!151, !150, !".omp_outlined..1: %.privates."}
-!152 = distinct !{!152, !150, !".omp_outlined..1: %.copy_fn."}
-!153 = distinct !{!153, !150, !".omp_outlined..1: %__context"}
-!154 = !DILocation(line: 63, column: 5, scope: !124, inlinedAt: !132)
-!155 = !DILocation(line: 62, column: 1, scope: !124, inlinedAt: !132)
-!156 = !DILocation(line: 63, column: 11, scope: !124, inlinedAt: !132)
-!157 = !DILocation(line: 63, column: 12, scope: !124, inlinedAt: !132)
-!158 = !DILocation(line: 63, column: 7, scope: !124, inlinedAt: !132)
-!159 = !DILocation(line: 63, column: 6, scope: !124, inlinedAt: !132)
-!160 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 76, type: !161, scopeLine: 77, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!161 = !DISubroutineType(types: !162)
-!162 = !{!14}
-!163 = !DILocalVariable(name: "result", scope: !160, file: !3, line: 78, type: !14)
-!164 = !DILocation(line: 78, column: 7, scope: !160)
-!165 = !DILocation(line: 79, column: 1, scope: !160)
-!166 = !DILocation(line: 86, column: 57, scope: !160)
-!167 = !DILocation(line: 86, column: 64, scope: !160)
-!168 = !DILocation(line: 86, column: 3, scope: !160)
-!169 = !DILocation(line: 87, column: 3, scope: !160)
-!170 = distinct !DISubprogram(name: ".omp_outlined._debug__", scope: !3, file: !3, line: 80, type: !171, scopeLine: 80, flags: DIFlagPrototyped, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!171 = !DISubroutineType(types: !172)
-!172 = !{null, !63, !63, !173}
-!173 = !DIDerivedType(tag: DW_TAG_reference_type, baseType: !14, size: 64)
-!174 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !170, type: !63, flags: DIFlagArtificial)
-!175 = !DILocation(line: 0, scope: !170)
-!176 = !DILocalVariable(name: ".bound_tid.", arg: 2, scope: !170, type: !63, flags: DIFlagArtificial)
-!177 = !DILocalVariable(name: "result", arg: 3, scope: !170, file: !3, line: 78, type: !173)
-!178 = !DILocation(line: 78, column: 7, scope: !170)
-!179 = !DILocation(line: 80, column: 3, scope: !170)
-!180 = !DILocation(line: 81, column: 4, scope: !181)
-!181 = distinct !DILexicalBlock(scope: !170, file: !3, line: 80, column: 3)
-!182 = !DILocation(line: 83, column: 20, scope: !183)
-!183 = distinct !DILexicalBlock(scope: !184, file: !3, line: 82, column: 5)
-!184 = distinct !DILexicalBlock(scope: !181, file: !3, line: 81, column: 4)
-!185 = !DILocation(line: 83, column: 16, scope: !183)
-!186 = !DILocation(line: 83, column: 14, scope: !183)
-!187 = !DILocation(line: 84, column: 5, scope: !183)
-!188 = !DILocation(line: 81, column: 22, scope: !184)
-!189 = !DILocation(line: 85, column: 3, scope: !170)
-!190 = distinct !DISubprogram(name: ".omp_outlined..4", scope: !3, file: !3, line: 80, type: !171, scopeLine: 80, flags: DIFlagPrototyped, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!191 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !190, type: !63, flags: DIFlagArtificial)
-!192 = !DILocation(line: 0, scope: !190)
-!193 = !DILocalVariable(name: ".bound_tid.", arg: 2, scope: !190, type: !63, flags: DIFlagArtificial)
-!194 = !DILocalVariable(name: "result", arg: 3, scope: !190, type: !173, flags: DIFlagArtificial)
-!195 = !DILocation(line: 80, column: 3, scope: !190)
-!196 = !{!197}
-!197 = !{i64 2, i64 -1, i64 -1, i1 true}
+!10 = !{i32 7, !"PIC Level", i32 2}
+!11 = !{i32 7, !"PIE Level", i32 2}
+!12 = !{!"clang version 11.1.0"}
+!13 = distinct !DISubprogram(name: "fib", scope: !3, file: !3, line: 53, type: !14, scopeLine: 54, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !17)
+!14 = !DISubroutineType(types: !15)
+!15 = !{!16, !6}
+!16 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
+!17 = !{!18, !19, !22, !23}
+!18 = !DILocalVariable(name: "n", arg: 1, scope: !13, file: !3, line: 53, type: !6)
+!19 = !DILocalVariable(name: "i", scope: !20, file: !3, line: 59, type: !16)
+!20 = distinct !DILexicalBlock(scope: !21, file: !3, line: 58, column: 3)
+!21 = distinct !DILexicalBlock(scope: !13, file: !3, line: 55, column: 7)
+!22 = !DILocalVariable(name: "j", scope: !20, file: !3, line: 59, type: !16)
+!23 = !DILocalVariable(name: "res", scope: !20, file: !3, line: 65, type: !16)
+!24 = !{!25, !25, i64 0}
+!25 = !{!"int", !26, i64 0}
+!26 = !{!"omnipotent char", !27, i64 0}
+!27 = !{!"Simple C/C++ TBAA"}
+!28 = !DILocation(line: 53, column: 22, scope: !13)
+!29 = !DILocation(line: 55, column: 7, scope: !21)
+!30 = !DILocation(line: 55, column: 8, scope: !21)
+!31 = !DILocation(line: 55, column: 7, scope: !13)
+!32 = !DILocation(line: 56, column: 12, scope: !21)
+!33 = !DILocation(line: 56, column: 5, scope: !21)
+!34 = !DILocation(line: 59, column: 5, scope: !20)
+!35 = !DILocation(line: 59, column: 9, scope: !20)
+!36 = !DILocation(line: 59, column: 12, scope: !20)
+!37 = !DILocation(line: 60, column: 1, scope: !20)
+!38 = !{!39, !39, i64 0}
+!39 = !{!"any pointer", !26, i64 0}
+!40 = !{!41, !39, i64 0}
+!41 = !{!"kmp_task_t_with_privates", !42, i64 0, !43, i64 40}
+!42 = !{!"kmp_task_t", !39, i64 0, !39, i64 8, !25, i64 16, !26, i64 24, !26, i64 32}
+!43 = !{!".kmp_privates.t", !25, i64 0}
+!44 = !{i64 0, i64 8, !38}
+!45 = !DILocation(line: 61, column: 11, scope: !46)
+!46 = distinct !DILexicalBlock(scope: !20, file: !3, line: 60, column: 1)
+!47 = !{!41, !25, i64 40}
+!48 = !DILocation(line: 62, column: 1, scope: !20)
+!49 = !DILocation(line: 63, column: 11, scope: !50)
+!50 = distinct !DILexicalBlock(scope: !20, file: !3, line: 62, column: 1)
+!51 = !DILocation(line: 65, column: 5, scope: !20)
+!52 = !DILocation(line: 65, column: 9, scope: !20)
+!53 = !DILocation(line: 65, column: 14, scope: !20)
+!54 = !DILocation(line: 65, column: 16, scope: !20)
+!55 = !DILocation(line: 65, column: 15, scope: !20)
+!56 = !DILocation(line: 72, column: 1, scope: !20)
+!57 = !DILocation(line: 73, column: 12, scope: !20)
+!58 = !DILocation(line: 73, column: 5, scope: !20)
+!59 = !DILocation(line: 74, column: 3, scope: !21)
+!60 = !DILocation(line: 75, column: 1, scope: !13)
+!61 = distinct !DISubprogram(name: ".omp_outlined.", scope: !3, file: !3, line: 61, type: !62, scopeLine: 61, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !81)
+!62 = !DISubroutineType(types: !63)
+!63 = !{null, !64, !65, !68, !71, !76, !77}
+!64 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !16)
+!65 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !66)
+!66 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !67)
+!67 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !64, size: 64)
+!68 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !69)
+!69 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !70)
+!70 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: null, size: 64)
+!71 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !72)
+!72 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !73)
+!73 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !74, size: 64)
+!74 = !DISubroutineType(types: !75)
+!75 = !{null, !68, null}
+!76 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !70)
+!77 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !78)
+!78 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !79)
+!79 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !80, size: 64)
+!80 = distinct !DICompositeType(tag: DW_TAG_structure_type, scope: !13, file: !3, line: 60, size: 64, elements: !4)
+!81 = !{!82, !83, !84, !85, !86, !87}
+!82 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !61, type: !64, flags: DIFlagArtificial)
+!83 = !DILocalVariable(name: ".part_id.", arg: 2, scope: !61, type: !65, flags: DIFlagArtificial)
+!84 = !DILocalVariable(name: ".privates.", arg: 3, scope: !61, type: !68, flags: DIFlagArtificial)
+!85 = !DILocalVariable(name: ".copy_fn.", arg: 4, scope: !61, type: !71, flags: DIFlagArtificial)
+!86 = !DILocalVariable(name: ".task_t.", arg: 5, scope: !61, type: !76, flags: DIFlagArtificial)
+!87 = !DILocalVariable(name: "__context", arg: 6, scope: !61, type: !77, flags: DIFlagArtificial)
+!88 = !DILocation(line: 0, scope: !61)
+!89 = !DILocation(line: 61, column: 5, scope: !61)
+!90 = !DILocation(line: 60, column: 1, scope: !61)
+!91 = !DILocation(line: 61, column: 11, scope: !61)
+!92 = !DILocation(line: 61, column: 12, scope: !61)
+!93 = !DILocation(line: 61, column: 7, scope: !61)
+!94 = !{!95, !39, i64 0}
+!95 = !{!"", !39, i64 0}
+!96 = !DILocation(line: 61, column: 6, scope: !61)
+!97 = !DILocation(line: 61, column: 14, scope: !61)
+!98 = distinct !DISubprogram(linkageName: ".omp_task_privates_map.", scope: !3, file: !3, line: 60, type: !99, scopeLine: 60, flags: DIFlagArtificial | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !100)
+!99 = !DISubroutineType(types: !4)
+!100 = !{!101, !106}
+!101 = !DILocalVariable(arg: 1, scope: !98, type: !102, flags: DIFlagArtificial)
+!102 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !103)
+!103 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !104)
+!104 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !105, size: 64)
+!105 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: ".kmp_privates.t", file: !3, size: 32, elements: !4)
+!106 = !DILocalVariable(arg: 2, scope: !98, type: !107, flags: DIFlagArtificial)
+!107 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !108)
+!108 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !109)
+!109 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !110, size: 64)
+!110 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !6, size: 64)
+!111 = !DILocation(line: 0, scope: !98)
+!112 = !DILocation(line: 60, column: 1, scope: !98)
+!113 = distinct !DISubprogram(linkageName: ".omp_task_entry.", scope: !3, file: !3, line: 60, type: !99, scopeLine: 60, flags: DIFlagArtificial | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !114)
+!114 = !{!115, !116}
+!115 = !DILocalVariable(arg: 1, scope: !113, type: !16, flags: DIFlagArtificial)
+!116 = !DILocalVariable(arg: 2, scope: !113, type: !117, flags: DIFlagArtificial)
+!117 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !118)
+!118 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !119, size: 64)
+!119 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t_with_privates", file: !3, size: 384, elements: !120)
+!120 = !{!121, !127}
+!121 = !DIDerivedType(tag: DW_TAG_member, scope: !119, file: !3, baseType: !122, size: 320)
+!122 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t", file: !3, size: 320, elements: !123)
+!123 = !{!124, !126}
+!124 = !DIDerivedType(tag: DW_TAG_member, scope: !122, file: !3, baseType: !125, size: 64, offset: 192)
+!125 = distinct !DICompositeType(tag: DW_TAG_union_type, name: "kmp_cmplrdata_t", file: !3, size: 64, elements: !4)
+!126 = !DIDerivedType(tag: DW_TAG_member, scope: !122, file: !3, baseType: !125, size: 64, offset: 256)
+!127 = !DIDerivedType(tag: DW_TAG_member, scope: !119, file: !3, baseType: !105, size: 32, offset: 320)
+!128 = !DILocation(line: 0, scope: !113)
+!129 = !DILocation(line: 60, column: 1, scope: !113)
+!130 = distinct !DISubprogram(name: ".omp_outlined..1", scope: !3, file: !3, line: 63, type: !131, scopeLine: 63, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !137)
+!131 = !DISubroutineType(types: !132)
+!132 = !{null, !64, !65, !68, !71, !76, !133}
+!133 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !134)
+!134 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !135)
+!135 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !136, size: 64)
+!136 = distinct !DICompositeType(tag: DW_TAG_structure_type, scope: !13, file: !3, line: 62, size: 64, elements: !4)
+!137 = !{!138, !139, !140, !141, !142, !143}
+!138 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !130, type: !64, flags: DIFlagArtificial)
+!139 = !DILocalVariable(name: ".part_id.", arg: 2, scope: !130, type: !65, flags: DIFlagArtificial)
+!140 = !DILocalVariable(name: ".privates.", arg: 3, scope: !130, type: !68, flags: DIFlagArtificial)
+!141 = !DILocalVariable(name: ".copy_fn.", arg: 4, scope: !130, type: !71, flags: DIFlagArtificial)
+!142 = !DILocalVariable(name: ".task_t.", arg: 5, scope: !130, type: !76, flags: DIFlagArtificial)
+!143 = !DILocalVariable(name: "__context", arg: 6, scope: !130, type: !133, flags: DIFlagArtificial)
+!144 = !DILocation(line: 0, scope: !130)
+!145 = !DILocation(line: 63, column: 5, scope: !130)
+!146 = !DILocation(line: 62, column: 1, scope: !130)
+!147 = !DILocation(line: 63, column: 11, scope: !130)
+!148 = !DILocation(line: 63, column: 12, scope: !130)
+!149 = !DILocation(line: 63, column: 7, scope: !130)
+!150 = !DILocation(line: 63, column: 6, scope: !130)
+!151 = !DILocation(line: 63, column: 14, scope: !130)
+!152 = distinct !DISubprogram(linkageName: ".omp_task_privates_map..2", scope: !3, file: !3, line: 62, type: !99, scopeLine: 62, flags: DIFlagArtificial | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !153)
+!153 = !{!154, !159}
+!154 = !DILocalVariable(arg: 1, scope: !152, type: !155, flags: DIFlagArtificial)
+!155 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !156)
+!156 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !157)
+!157 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !158, size: 64)
+!158 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: ".kmp_privates.t", file: !3, size: 32, elements: !4)
+!159 = !DILocalVariable(arg: 2, scope: !152, type: !107, flags: DIFlagArtificial)
+!160 = !DILocation(line: 0, scope: !152)
+!161 = !DILocation(line: 62, column: 1, scope: !152)
+!162 = distinct !DISubprogram(linkageName: ".omp_task_entry..3", scope: !3, file: !3, line: 62, type: !99, scopeLine: 62, flags: DIFlagArtificial | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !163)
+!163 = !{!164, !165}
+!164 = !DILocalVariable(arg: 1, scope: !162, type: !16, flags: DIFlagArtificial)
+!165 = !DILocalVariable(arg: 2, scope: !162, type: !166, flags: DIFlagArtificial)
+!166 = !DIDerivedType(tag: DW_TAG_restrict_type, baseType: !167)
+!167 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !168, size: 64)
+!168 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "kmp_task_t_with_privates", file: !3, size: 384, elements: !169)
+!169 = !{!170, !171}
+!170 = !DIDerivedType(tag: DW_TAG_member, scope: !168, file: !3, baseType: !122, size: 320)
+!171 = !DIDerivedType(tag: DW_TAG_member, scope: !168, file: !3, baseType: !158, size: 32, offset: 320)
+!172 = !DILocation(line: 0, scope: !162)
+!173 = !DILocation(line: 62, column: 1, scope: !162)
+!174 = distinct !DISubprogram(name: "main", scope: !3, file: !3, line: 76, type: !175, scopeLine: 77, flags: DIFlagAllCallsDescribed, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !177)
+!175 = !DISubroutineType(types: !176)
+!176 = !{!16}
+!177 = !{!178}
+!178 = !DILocalVariable(name: "result", scope: !174, file: !3, line: 78, type: !16)
+!179 = !DILocation(line: 78, column: 3, scope: !174)
+!180 = !DILocation(line: 78, column: 7, scope: !174)
+!181 = !DILocation(line: 79, column: 1, scope: !174)
+!182 = !DILocation(line: 86, column: 57, scope: !174)
+!183 = !DILocation(line: 86, column: 64, scope: !174)
+!184 = !DILocation(line: 86, column: 3, scope: !174)
+!185 = !DILocation(line: 88, column: 1, scope: !174)
+!186 = !DILocation(line: 87, column: 3, scope: !174)
+!187 = distinct !DISubprogram(name: ".omp_outlined._debug__", scope: !3, file: !3, line: 80, type: !188, scopeLine: 80, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !191)
+!188 = !DISubroutineType(types: !189)
+!189 = !{null, !65, !65, !190}
+!190 = !DIDerivedType(tag: DW_TAG_reference_type, baseType: !16, size: 64)
+!191 = !{!192, !193, !194}
+!192 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !187, type: !65, flags: DIFlagArtificial)
+!193 = !DILocalVariable(name: ".bound_tid.", arg: 2, scope: !187, type: !65, flags: DIFlagArtificial)
+!194 = !DILocalVariable(name: "result", arg: 3, scope: !187, file: !3, line: 78, type: !190)
+!195 = !DILocation(line: 0, scope: !187)
+!196 = !DILocation(line: 78, column: 7, scope: !187)
+!197 = !DILocation(line: 80, column: 3, scope: !187)
+!198 = !DILocation(line: 81, column: 4, scope: !199)
+!199 = distinct !DILexicalBlock(scope: !187, file: !3, line: 80, column: 3)
+!200 = !DILocation(line: 83, column: 20, scope: !201)
+!201 = distinct !DILexicalBlock(scope: !202, file: !3, line: 82, column: 5)
+!202 = distinct !DILexicalBlock(scope: !199, file: !3, line: 81, column: 4)
+!203 = !DILocation(line: 83, column: 16, scope: !201)
+!204 = !DILocation(line: 83, column: 14, scope: !201)
+!205 = !DILocation(line: 84, column: 5, scope: !201)
+!206 = !DILocation(line: 81, column: 22, scope: !202)
+!207 = !DILocation(line: 85, column: 3, scope: !187)
+!208 = distinct !DISubprogram(name: ".omp_outlined..4", scope: !3, file: !3, line: 79, type: !188, scopeLine: 79, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !209)
+!209 = !{!210, !211, !212}
+!210 = !DILocalVariable(name: ".global_tid.", arg: 1, scope: !208, type: !65, flags: DIFlagArtificial)
+!211 = !DILocalVariable(name: ".bound_tid.", arg: 2, scope: !208, type: !65, flags: DIFlagArtificial)
+!212 = !DILocalVariable(name: "result", arg: 3, scope: !208, type: !190, flags: DIFlagArtificial)
+!213 = !DILocation(line: 0, scope: !208)
+!214 = !DILocation(line: 79, column: 1, scope: !208)
+!215 = !{!216}
+!216 = !{i64 2, i64 -1, i64 -1, i1 true}
