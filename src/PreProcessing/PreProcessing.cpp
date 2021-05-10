@@ -44,6 +44,7 @@ void preprocess(llvm::Module &module) {
   pb.crossRegisterProxies(lam, fam, cgam, mam);
 
   llvm::FunctionPassManager fpm;
+  fpm.addPass(llvm::SROA());
   fpm.addPass(llvm::EarlyCSEPass(true));
   fpm.addPass(llvm::SimplifyCFGPass());
   fpm.addPass(llvm::InstCombinePass());
