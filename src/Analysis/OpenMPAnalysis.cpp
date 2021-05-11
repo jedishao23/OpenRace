@@ -631,13 +631,8 @@ std::vector<const llvm::BasicBlock*>& ReduceAnalysis::computeGuardedBlocks(Reduc
     worklist.pop_back();
     visited.insert(block);
 
-<<<<<<< HEAD
     // Stop traversing when we reach end of reduce code
     if (block == exitBlock) continue;
-=======
-bool OpenMPAnalysis::inSameSingleBlock(const Event *event1, const Event *event2) const {
-  assert(inSameTeam(event1, event2));
->>>>>>> 343b128 (better constant propagation + fix misuse of noalias)
 
     // add to list of blocks covered by this reduce
     blocks.push_back(block);
@@ -645,7 +640,6 @@ bool OpenMPAnalysis::inSameSingleBlock(const Event *event1, const Event *event2)
     // sanity check that all succ must eventually reach exitBlock
     assert(llvm::succ_size(block) > 0 && "block should have successors");
 
-<<<<<<< HEAD
     // Keep traversing
     for (auto const succ : llvm::successors(block)) {
       if (visited.find(succ) == visited.end()) {
@@ -655,13 +649,6 @@ bool OpenMPAnalysis::inSameSingleBlock(const Event *event1, const Event *event2)
       }
     }
   }
-=======
-  // Omp threads in same team will have identical traces so we only need one set of events
-  auto const singleRegions = getSingleRegions(event1->getThread());
-  for (auto const &region : singleRegions) {
-    // If region contains one, check if it also contains the other
-    if (region.contains(minID)) return region.contains(maxID);
->>>>>>> 343b128 (better constant propagation + fix misuse of noalias)
 
   return blocks;
 }
