@@ -33,6 +33,17 @@ class BitExtSCEVRewriter : public llvm::SCEVRewriteVisitor<BitExtSCEVRewriter> {
   inline const SCEV *visitSignExtendExpr(const SCEVSignExtendExpr *Expr) { return rewriteCastExpr(Expr); }
 };
 
+class SCEVBoundApplier : public llvm::SCEVRewriteVisitor<SCEVBoundApplier> {
+ private:
+  using super = SCEVRewriteVisitor<SCEVBoundApplier>;
+  const llvm::Loop *ompLoop;
+
+ public:
+  SCEVBoundApplier(const llvm::Loop *ompLoop, llvm::ScalarEvolution &SE) : ompLoop(ompLoop), super(SE) {}
+
+  const llvm::SCEV *visitAddRecExpr(const llvm::SCEVAddRecExpr *Expr);
+};
+
 class OpenMPLoopManager {
  private:
   Function *F;
@@ -47,7 +58,7 @@ class OpenMPLoopManager {
 
   void init();
 
-  int64_t resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const;
+  Optional<int64_t> resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const;
 
  public:
   // constructor
@@ -78,9 +89,7 @@ class OpenMPLoopManager {
     return getStaticInitCallIfExist(initBlock);
   }
 
-  std::pair<int64_t, int64_t> resolveOMPLoopBound(const CallBase *initForCall) const;
-
-  static constexpr int64_t InvalidLoopBound() { return std::numeric_limits<int64_t>::min(); }
+  std::pair<Optional<int64_t>, Optional<int64_t>> resolveOMPLoopBound(const CallBase *initForCall) const;
 };
 
 }  // namespace
@@ -140,6 +149,12 @@ static const SCEVAddRecExpr *getOMPLoopSCEV(const llvm::SCEV *root, const OpenMP
   return llvm::dyn_cast_or_null<llvm::SCEVAddRecExpr>(omp);
 }
 
+static const SCEV *getNextIterSCEV(const SCEVAddRecExpr *root, ScalarEvolution &SE) {
+  auto step = root->getOperand(1);
+  return SE.getAddRecExpr(SE.getAddExpr(root->getOperand(0), step), step,
+                          root->getLoop(), root->getNoWrapFlags());
+}
+
 const SCEV *BitExtSCEVRewriter::visit(const SCEV *S) {
   auto result = super::visit(S);
   // recursively into the sub expression
@@ -181,6 +196,25 @@ const SCEV *BitExtSCEVRewriter::rewriteCastExpr(const SCEVCastExpr *Expr) {
   return Operand == Expr->getOperand() ? Expr : buildCastExpr(Operand, Expr->getType());
 }
 
+const llvm::SCEV * SCEVBoundApplier::visitAddRecExpr(const llvm::SCEVAddRecExpr *Expr) {
+  // stop at the OpenMP Loop
+  if (Expr->getLoop() == ompLoop) {
+    return Expr;
+  }
+
+  if (Expr->isAffine()) {
+    auto op = visit(Expr->getOperand(0));
+    auto step = Expr->getOperand(1);
+
+    auto backEdgeCount = SE.getBackedgeTakenCount(Expr->getLoop());
+    if (isa<SCEVConstant>(backEdgeCount)) {
+      auto bounded = SE.getAddExpr(op, SE.getMulExpr(backEdgeCount, step));
+      return bounded;
+    }
+  }
+  return Expr;
+}
+
 void OpenMPLoopManager::rebuildWith(AnalysisManager<Function> &FAM, Function &fun) {
   this->F = &fun;
   // this->LI = &FAM.getResult<LoopAnalysis>(fun);
@@ -210,7 +244,7 @@ void OpenMPLoopManager::init() {
   }
 }
 
-int64_t OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const {
+Optional<int64_t> OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const {
   const llvm::StoreInst *storeInst = nullptr;
   for (auto user : V->users()) {
     if (auto SI = llvm::dyn_cast<llvm::StoreInst>(user)) {
@@ -221,8 +255,7 @@ int64_t OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase
         }
       } else {
         if (this->DT->dominates(SI, initCall)) {
-          // LOG_DEBUG("omp bound has one than one store!!"); // TODO: Peiming clarify
-          return InvalidLoopBound();
+          return Optional<int64_t>();
         }
       }
     }
@@ -233,14 +266,14 @@ int64_t OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase
     if (bound) {
       return bound->getSExtValue();
     }
-    return InvalidLoopBound();
+    return Optional<int64_t>();
   } else {
     // LOG_DEBUG("omp bound has no store??");
-    return InvalidLoopBound();
+    return Optional<int64_t>();
   }
 }
 
-std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBase *initForCall) const {
+std::pair<Optional<int64_t>, Optional<int64_t>> OpenMPLoopManager::resolveOMPLoopBound(const CallBase *initForCall) const {
   Value *ompLB = nullptr, *ompUB = nullptr;  // up bound and lower bound
   if (initForCall->getCalledFunction()->getName().startswith(KMPC_STATIC_INIT_PREFIX)) {
     ompLB = initForCall->getArgOperand(4);
@@ -249,7 +282,7 @@ std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBas
     ompLB = initForCall->getArgOperand(3);
     ompUB = initForCall->getArgOperand(4);
   } else {
-    return std::make_pair(InvalidLoopBound(), InvalidLoopBound());
+    return std::make_pair(Optional<int64_t>(), Optional<int64_t>());
   }
 
   auto allocaLB = llvm::dyn_cast<llvm::AllocaInst>(ompLB);
@@ -257,7 +290,7 @@ std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBas
 
   // omp.ub and omp.lb are always alloca?
   if (allocaLB == nullptr || allocaUB == nullptr) {
-    return std::make_pair(InvalidLoopBound(), InvalidLoopBound());
+    return std::make_pair(Optional<int64_t>(), Optional<int64_t>());
   }
 
   auto LB = resolveBoundValue(allocaLB, initForCall);
@@ -326,6 +359,11 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
     return true;
   }
 
+  // different openmp loop, should never happen though
+  if (omp1->getLoop() != omp2->getLoop()) {
+    return true;
+  }
+
   // some SCEV is in the form %base + {expr,+,%strip}<omp.loop>
   // since here the gap between two accesses are constant, the variable %base can simply be ignored.
   scev1 = stripSCEVBaseAddr(scev1);
@@ -347,10 +385,11 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
 
       CallBase *initForCall = ompManager.getStaticInitCallIfExist(omp1->getLoop());
       auto bounds = ompManager.resolveOMPLoopBound(initForCall);
-      int64_t lowerBound = std::abs(bounds.first);
-      int64_t upperBound = std::abs(bounds.second);
+      if (bounds.first.hasValue() && bounds.second.hasValue()) {
+        // do we need special handling for negetive bound?
+        int64_t lowerBound = std::abs(bounds.first.getValue());
+        int64_t upperBound = std::abs(bounds.second.getValue());
 
-      if (lowerBound != OpenMPLoopManager::InvalidLoopBound() && upperBound != OpenMPLoopManager::InvalidLoopBound()) {
         // if both bound are resolvable
         if (std::max(lowerBound, upperBound) < (distance / loopStep)) {
           return false;
@@ -359,7 +398,37 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
     }
   } else {
     // the parallel loop has nested loop inside
+    SCEVBoundApplier boundApplier(omp1->getLoop(), scev);
 
+    // this scev represent the largest array elements that will be accessed in the nested loop
+    auto b1 = boundApplier.visit(scev1);
+    auto b2 = boundApplier.visit(scev2);
+
+    // thus if the largest index is smaller than the smallest index in the next openmp loop iteration
+    // there is no race
+    // TODO: negative loop? are they canonicalized?
+    auto n1 = getNextIterSCEV(omp1, scev);
+    auto n2 = getNextIterSCEV(omp2, scev);
+
+    std::vector<const SCEV *> gaps = {scev.getMinusSCEV(n1, b1),
+                                      scev.getMinusSCEV(n1, b2),
+                                      scev.getMinusSCEV(n2, b1),
+                                      scev.getMinusSCEV(n2, b2)};
+
+    if (std::all_of(gaps.begin(), gaps.end(), [](const SCEV *expr)->bool {
+          expr->dump();
+          if (auto constExpr = dyn_cast<SCEVConstant>(expr)) {
+            if (constExpr->getAPInt().isNonPositive()) {
+              // the gaps are smaller or equal to zero
+              return false;
+            }
+            return true;
+          }
+          return false; })) {
+
+      // then there is no race
+      return false;
+    }
   }
 
   // If unsure report they do alias
