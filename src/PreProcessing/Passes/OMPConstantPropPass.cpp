@@ -24,6 +24,15 @@ using namespace llvm;
 
 DEBUG_COUNTER(CPCounter, "constprop-transform", "Controls which instructions are killed");
 
+static inline bool hasGlobalOverwritten(GlobalVariable *GV) {
+  for (auto &use : GV->uses()) {
+    if (isa<StoreInst>(use)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 static bool intraConstantProp(Function &F, const TargetLibraryInfo &TLI) {
   // Initialize the worklist to all of the instructions ready to process...
   SmallPtrSet<Instruction *, 16> WorkList;
@@ -39,42 +48,53 @@ static bool intraConstantProp(Function &F, const TargetLibraryInfo &TLI) {
   bool Changed = false;
   const DataLayout &DL = F.getParent()->getDataLayout();
 
-
   while (!WorkList.empty()) {
     SmallVector<Instruction *, 16> NewWorkListVec;
     for (auto *I : WorkListVec) {
       WorkList.erase(I);  // Remove element from the worklist...
 
-      if (!I->use_empty())  // Don't muck with dead instructions...
-        if (Constant *C = ConstantFoldInstruction(I, DL, &TLI)) {
-          if (!DebugCounter::shouldExecute(CPCounter)) continue;
+      if (I->use_empty()) {
+        continue;
+      }  // Don't muck with dead instructions...
 
-          // Add all of the users of this instruction to the worklist,
-          // they might be constant propagatable now...
-          for (User *U : I->users()) {
-            // If user not in the set, then add it to the vector.
-            if (WorkList.insert(cast<Instruction>(U)).second)
-              NewWorkListVec.push_back(cast<Instruction>(U));
+      Constant *C = nullptr;
+      if (auto LI = dyn_cast<LoadInst>(I)) {
+        if (auto GV = dyn_cast<GlobalVariable>(LI->getPointerOperand()->stripPointerCasts())) {
+          if (GV->hasInitializer()) {
+            if (GV->isConstant() || !hasGlobalOverwritten(GV)) {
+              C = GV->getInitializer();
+            }
           }
-
-          // Replace all of the uses of a variable with uses of the
-          // constant.
-          I->replaceAllUsesWith(C);
-
-          if (isInstructionTriviallyDead(I, &TLI)) {
-            I->eraseFromParent();
-          }
-
-          // We made a change to the function...
-          Changed = true;
         }
+      } else {
+        C = ConstantFoldInstruction(I, DL, &TLI);
+      }
+
+      // Add all of the users of this instruction to the worklist,
+      // they might be constant propagatable now...
+      if (C != nullptr) {
+        for (User *U : I->users()) {
+          // If user not in the set, then add it to the vector.
+          if (WorkList.insert(cast<Instruction>(U)).second) NewWorkListVec.push_back(cast<Instruction>(U));
+        }
+        // Replace all of the uses of a variable with uses of the
+        // constant.
+        I->replaceAllUsesWith(C);
+
+        if (isInstructionTriviallyDead(I, &TLI)) {
+          I->eraseFromParent();
+        }
+
+        // We made a change to the function...
+        Changed = true;
+      }
     }
     WorkListVec = std::move(NewWorkListVec);
   }
   return Changed;
 }
 
-static StoreInst* findUniqueDominatedStoreDef(Value *V, const Instruction *I, const DominatorTree &DT) {
+static StoreInst *findUniqueDominatedStoreDef(Value *V, const Instruction *I, const DominatorTree &DT) {
   StoreInst *storeInst = nullptr;
   for (auto user : V->users()) {
     if (auto SI = llvm::dyn_cast<llvm::StoreInst>(user)) {
@@ -94,7 +114,7 @@ static StoreInst* findUniqueDominatedStoreDef(Value *V, const Instruction *I, co
   return storeInst;
 }
 
-static bool PropagateConstantsIntoArguments(Function &F, const DominatorTree& DT, const TargetLibraryInfo &TLI) {
+static bool PropagateConstantsIntoArguments(Function &F, const DominatorTree &DT, const TargetLibraryInfo &TLI) {
   if (F.arg_empty() || F.use_empty()) return false;  // No arguments? Early exit.
 
   // For each argument, keep track of its constant value and whether it is a
@@ -229,9 +249,14 @@ static bool PropagateConstantsIntoArguments(Function &F, const DominatorTree& DT
   return MadeChange;
 }
 
-static bool runOMPCP(Module &M, std::function<const TargetLibraryInfo& (Function &)> GetTLI,
-                     std::function<const DominatorTree& (Function &)> GetDT) {
+static bool runOMPCP(Module &M, std::function<const TargetLibraryInfo &(Function &)> GetTLI,
+                     std::function<const DominatorTree &(Function &)> GetDT) {
   bool Changed = false, LocalChange = true, functionChanged = true;
+
+  for (Function &F : M) {
+    const TargetLibraryInfo &TLI = GetTLI(F);
+    Changed = intraConstantProp(F, TLI);
+  }
 
   // propagate constant into function arguement
   SmallSet<Function *, 8> changedFunction;
@@ -265,13 +290,9 @@ static bool runOMPCP(Module &M, std::function<const TargetLibraryInfo& (Function
 
 PreservedAnalyses OMPConstantPropPass::run(Module &M, ModuleAnalysisManager &AM) {
   auto &FAM = AM.getResult<FunctionAnalysisManagerModuleProxy>(M).getManager();
-  auto GetTLI = [&FAM](Function &F) -> const TargetLibraryInfo & {
-    return FAM.getResult<TargetLibraryAnalysis>(F);
-  };
+  auto GetTLI = [&FAM](Function &F) -> const TargetLibraryInfo & { return FAM.getResult<TargetLibraryAnalysis>(F); };
 
-  auto GetDT = [&FAM](Function &F) -> const DominatorTree & {
-    return FAM.getResult<DominatorTreeAnalysis>(F);
-  };
+  auto GetDT = [&FAM](Function &F) -> const DominatorTree & { return FAM.getResult<DominatorTreeAnalysis>(F); };
 
   if (!runOMPCP(M, GetTLI, GetDT)) {
     return PreservedAnalyses::all();
@@ -297,5 +318,5 @@ bool LegacyOMPConstantPropPass::runOnModule(Module &M) {
 
 char LegacyOMPConstantPropPass::ID = 0;
 static RegisterPass<LegacyOMPConstantPropPass> OCP("Constant Propagation for OMP callbacks",
-                                                "Constant Propagation for OMP callbacks", true, /*CFG only*/
-                                                false /*is analysis*/);
+                                                   "Constant Propagation for OMP callbacks", true, /*CFG only*/
+                                                   false /*is analysis*/);

@@ -11,6 +11,8 @@ limitations under the License.
 
 #include "RaceDetect.h"
 
+#include <llvm/Analysis/ScopedNoAliasAA.h>
+
 #include "Analysis/HappensBeforeGraph.h"
 #include "Analysis/LockSet.h"
 #include "Analysis/OpenMPAnalysis.h"
@@ -42,10 +44,31 @@ Report race::detectRaces(llvm::Module *module, DetectRaceConfig config) {
 
   race::Reporter reporter;
 
+  llvm::PassBuilder PB;
+  llvm::FunctionAnalysisManager FAM;
+  PB.registerFunctionAnalyses(FAM);
+  // contains default AA pipeline (type + scoped + global)
+  // but i do not know how to register it properly now
+  // FAM.registerPass([&] { return PB.buildDefaultAAPipeline(); });
+
   // Adds to report if race is detected between write and other
   auto checkRace = [&](const race::WriteEvent *write, const race::MemAccessEvent *other) {
     if (!happensbefore.areParallel(write, other) || lockset.sharesLock(write, other)) {
       return;
+    }
+
+    if (write->getFunction() == other->getFunction()) {
+      // since this is a function pass
+      llvm::AAQueryInfo aaqi;
+      auto& AAResult = FAM.getResult<llvm::ScopedNoAliasAA>(*(const_cast<llvm::Function *>(write->getFunction())));
+
+      auto memLoc1 = MemoryLocation::getOrNone(write->getInst());
+      auto memLoc2 = MemoryLocation::getOrNone(other->getInst());
+      if (memLoc1.hasValue() && memLoc2.hasValue()) {
+        if (AAResult.alias(memLoc1.getValue(), memLoc1.getValue(), aaqi) == AliasResult::NoAlias) {
+          return;
+        }
+      }
     }
 
     if (ompAnalysis.inSameTeam(write, other)) {

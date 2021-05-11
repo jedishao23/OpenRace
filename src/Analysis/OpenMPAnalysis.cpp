@@ -13,7 +13,7 @@ using namespace llvm;
 
 namespace {
 
-const llvm::GetElementPtrInst* getArrayAccess(const MemAccessEvent* event) {
+const llvm::GetElementPtrInst *getArrayAccess(const MemAccessEvent *event) {
   return llvm::dyn_cast<llvm::GetElementPtrInst>(event->getIRInst()->getAccessedValue()->stripPointerCasts());
 }
 
@@ -28,13 +28,9 @@ class BitExtSCEVRewriter : public llvm::SCEVRewriteVisitor<BitExtSCEVRewriter> {
 
   const SCEV *visit(const SCEV *S);
 
-  inline const SCEV *visitZeroExtendExpr(const SCEVZeroExtendExpr *Expr) {
-    return rewriteCastExpr(Expr);
-  };
+  inline const SCEV *visitZeroExtendExpr(const SCEVZeroExtendExpr *Expr) { return rewriteCastExpr(Expr); };
 
-  inline const SCEV *visitSignExtendExpr(const SCEVSignExtendExpr *Expr) {
-    return rewriteCastExpr(Expr);
-  }
+  inline const SCEV *visitSignExtendExpr(const SCEVSignExtendExpr *Expr) { return rewriteCastExpr(Expr); }
 };
 
 class OpenMPLoopManager {
@@ -42,7 +38,7 @@ class OpenMPLoopManager {
   Function *F;
 
   // dependent pass from LLVM
-  //LoopInfo *LI;
+  // LoopInfo *LI;
   DominatorTree *DT;
 
   // cached result. TODO: use const pointer
@@ -52,12 +48,15 @@ class OpenMPLoopManager {
   void init();
 
   int64_t resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const;
+
  public:
   // constructor
   OpenMPLoopManager(AnalysisManager<Function> &FAM, Function &fun)
       : F(&fun),
-        //LI(&FAM.getResult<LoopAnalysis>(fun)),
-        DT(&FAM.getResult<DominatorTreeAnalysis>(fun)) { init(); }
+        // LI(&FAM.getResult<LoopAnalysis>(fun)),
+        DT(&FAM.getResult<DominatorTreeAnalysis>(fun)) {
+    init();
+  }
 
   void rebuildWith(AnalysisManager<Function> &FAM, Function &F);
   // getter
@@ -81,16 +80,13 @@ class OpenMPLoopManager {
 
   std::pair<int64_t, int64_t> resolveOMPLoopBound(const CallBase *initForCall) const;
 
-  static constexpr int64_t InvalidLoopBound () {
-    return std::numeric_limits<int64_t>::min();
-  }
+  static constexpr int64_t InvalidLoopBound() { return std::numeric_limits<int64_t>::min(); }
 };
 
 }  // namespace
 
 static CallBase *getOMPStaticInitCall(const Loop *L, const OpenMPLoopManager &ompManger) {
-  if (L->getLoopPreheader() != nullptr &&
-      L->getLoopPreheader()->getUniquePredecessor() != nullptr) {
+  if (L->getLoopPreheader() != nullptr && L->getLoopPreheader()->getUniquePredecessor() != nullptr) {
     // find the corresponding static init call
     return ompManger.getStaticInitCallIfExist(L->getLoopPreheader()->getUniquePredecessor());
   }
@@ -126,9 +122,7 @@ static const SCEV *FindSCEVExpr(const llvm::SCEV *Root, PredTy Pred) {
 }
 
 static inline const SCEV *stripSCEVBaseAddr(const SCEV *root) {
-  return FindSCEVExpr(root, [](const llvm::SCEV *S) -> bool {
-    return isa<llvm::SCEVAddRecExpr>(S);
-  });
+  return FindSCEVExpr(root, [](const llvm::SCEV *S) -> bool { return isa<llvm::SCEVAddRecExpr>(S); });
 }
 
 static const SCEVAddRecExpr *getOMPLoopSCEV(const llvm::SCEV *root, const OpenMPLoopManager &ompManager) {
@@ -146,7 +140,7 @@ static const SCEVAddRecExpr *getOMPLoopSCEV(const llvm::SCEV *root, const OpenMP
   return llvm::dyn_cast_or_null<llvm::SCEVAddRecExpr>(omp);
 }
 
-const SCEV * BitExtSCEVRewriter::visit(const SCEV *S) {
+const SCEV *BitExtSCEVRewriter::visit(const SCEV *S) {
   auto result = super::visit(S);
   // recursively into the sub expression
   while (result != S) {
@@ -156,8 +150,8 @@ const SCEV * BitExtSCEVRewriter::visit(const SCEV *S) {
   return result;
 }
 
-const SCEV * BitExtSCEVRewriter::rewriteCastExpr(const SCEVCastExpr *Expr) {
-  auto buildCastExpr = [&] (const SCEV *op, Type *type) -> const SCEV *{
+const SCEV *BitExtSCEVRewriter::rewriteCastExpr(const SCEVCastExpr *Expr) {
+  auto buildCastExpr = [&](const SCEV *op, Type *type) -> const SCEV * {
     switch (Expr->getSCEVType()) {
       case scSignExtend:
         return SE.getSignExtendExpr(op, type);
@@ -189,7 +183,7 @@ const SCEV * BitExtSCEVRewriter::rewriteCastExpr(const SCEVCastExpr *Expr) {
 
 void OpenMPLoopManager::rebuildWith(AnalysisManager<Function> &FAM, Function &fun) {
   this->F = &fun;
-  //this->LI = &FAM.getResult<LoopAnalysis>(fun);
+  // this->LI = &FAM.getResult<LoopAnalysis>(fun);
   this->DT = &FAM.getResult<DominatorTreeAnalysis>(fun);
 
   ompDispatchInitBlocks.clear();
@@ -217,7 +211,6 @@ void OpenMPLoopManager::init() {
 }
 
 int64_t OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase *initCall) const {
-
   const llvm::StoreInst *storeInst = nullptr;
   for (auto user : V->users()) {
     if (auto SI = llvm::dyn_cast<llvm::StoreInst>(user)) {
@@ -248,7 +241,7 @@ int64_t OpenMPLoopManager::resolveBoundValue(const AllocaInst *V, const CallBase
 }
 
 std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBase *initForCall) const {
-  Value *ompLB = nullptr, *ompUB = nullptr; // up bound and lower bound
+  Value *ompLB = nullptr, *ompUB = nullptr;  // up bound and lower bound
   if (initForCall->getCalledFunction()->getName().startswith(KMPC_STATIC_INIT_PREFIX)) {
     ompLB = initForCall->getArgOperand(4);
     ompUB = initForCall->getArgOperand(5);
@@ -258,7 +251,6 @@ std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBas
   } else {
     return std::make_pair(InvalidLoopBound(), InvalidLoopBound());
   }
-
 
   auto allocaLB = llvm::dyn_cast<llvm::AllocaInst>(ompLB);
   auto allocaUB = llvm::dyn_cast<llvm::AllocaInst>(ompUB);
@@ -273,10 +265,9 @@ std::pair<int64_t, int64_t> OpenMPLoopManager::resolveOMPLoopBound(const CallBas
   return std::make_pair(LB, UB);
 }
 
-
 OpenMPAnalysis::OpenMPAnalysis() { PB.registerFunctionAnalyses(FAM); }
 
-bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const race::MemAccessEvent* event2) {
+bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const race::MemAccessEvent *event2) {
   auto gep1 = getArrayAccess(event1);
   if (!gep1) return false;
 
@@ -288,7 +279,7 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
     return false;
   }
 
-  auto &targetFun = *const_cast<llvm::Function*>(gep1->getFunction());
+  auto &targetFun = *const_cast<llvm::Function *>(gep1->getFunction());
   static OpenMPLoopManager ompManager(FAM, targetFun);
 
   if (&targetFun != ompManager.getTargetFunction()) {
@@ -297,12 +288,12 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
   }
 
   // TODO: get rid of const cast? Also does FAM cache these results (I think it does?)
-  auto& LI = FAM.getResult<LoopAnalysis>(targetFun);
-  auto& scev = FAM.getResult<ScalarEvolutionAnalysis>(targetFun);
+  auto &LI = FAM.getResult<LoopAnalysis>(targetFun);
+  auto &scev = FAM.getResult<ScalarEvolutionAnalysis>(targetFun);
 
   BitExtSCEVRewriter rewriter(scev);
-  auto scev1 = scev.getSCEV(const_cast<llvm::Value*>(llvm::cast<llvm::Value>(gep1)));
-  auto scev2 = scev.getSCEV(const_cast<llvm::Value*>(llvm::cast<llvm::Value>(gep2)));
+  auto scev1 = scev.getSCEV(const_cast<llvm::Value *>(llvm::cast<llvm::Value>(gep1)));
+  auto scev2 = scev.getSCEV(const_cast<llvm::Value *>(llvm::cast<llvm::Value>(gep2)));
   // the rewriter here move the bit extension operation into the deepest scopy
   // e.g., (4 + (4 * (sext i32 (2 * %storemerge2) to i64))<nsw> + %a) will be rewrited to
   //   ==> (4 + (8 * (sext i32 %storemerge2 to i64)) + %a)
@@ -310,8 +301,7 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
   // during the computation between two scev expression.
   scev1 = rewriter.visit(scev1);
   scev2 = rewriter.visit(scev2);
-  auto tmp = scev.getMinusSCEV(scev1, scev2);
-  auto diff = dyn_cast<SCEVConstant>(tmp);
+  auto diff = dyn_cast<SCEVConstant>(scev.getMinusSCEV(scev1, scev2));
 
   if (diff == nullptr) {
     // TODO: we are unable to analyze unknown gap array index for now.
@@ -323,49 +313,53 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
     return false;
   }
 
-  /* two gep points to different elements **/
-
   // strip off the scev
   auto omp1 = getOMPLoopSCEV(scev1, ompManager);
   auto omp2 = getOMPLoopSCEV(scev2, ompManager);
+
+  // the scev expression does not contains openmp for loop
+  if (!omp1 && !omp2) {
+    return true;
+  }
+
+  if (!omp1->isAffine() || !omp2->isAffine()) {
+    return true;
+  }
 
   // some SCEV is in the form %base + {expr,+,%strip}<omp.loop>
   // since here the gap between two accesses are constant, the variable %base can simply be ignored.
   scev1 = stripSCEVBaseAddr(scev1);
   scev2 = stripSCEVBaseAddr(scev2);
 
-  if (omp1 && omp2) {
-    // both access are in the omp loop
-    if (omp1 == scev1 && omp2 == scev2) {
-      // the outside-most loop are the parallel loop as well instead of being parallel loop nested in a
-      // nested loop.
-      uint64_t distance = diff->getAPInt().abs().getLimitedValue();
+  if (omp1 == scev1 && omp2 == scev2) {
+    // the outside-most loop are the parallel loop as well instead of being parallel loop nested in a
+    // nested loop.
+    uint64_t distance = diff->getAPInt().abs().getLimitedValue();
+    auto step = omp1->getOperand(1);
 
-      if (omp1->isAffine()) {
-        auto step = omp1->getOperand(1);
-        if (auto constStep = llvm::dyn_cast<llvm::SCEVConstant>(step)) {
-          // the step of the loop
-          uint64_t loopStep = constStep->getAPInt().abs().getLimitedValue();
-          // assume we iterate at least one time
-          if (distance == loopStep) {
-            return true;
-          }
+    if (auto constStep = llvm::dyn_cast<llvm::SCEVConstant>(step)) {
+      // the step of the loop
+      uint64_t loopStep = constStep->getAPInt().abs().getLimitedValue();
+      // assume we iterate at least one time
+      if (distance == loopStep) {
+        return true;
+      }
 
-          CallBase *initForCall = ompManager.getStaticInitCallIfExist(omp1->getLoop());
-          auto bounds = ompManager.resolveOMPLoopBound(initForCall);
-          int64_t lowerBound = std::abs(bounds.first);
-          int64_t upperBound = std::abs(bounds.second);
+      CallBase *initForCall = ompManager.getStaticInitCallIfExist(omp1->getLoop());
+      auto bounds = ompManager.resolveOMPLoopBound(initForCall);
+      int64_t lowerBound = std::abs(bounds.first);
+      int64_t upperBound = std::abs(bounds.second);
 
-          if (lowerBound != OpenMPLoopManager::InvalidLoopBound() &&
-              upperBound != OpenMPLoopManager::InvalidLoopBound()) {
-            // if both bound are resolvable
-            if (std::max(lowerBound, upperBound) < (distance / loopStep)) {
-              return false;
-            }
-          }
+      if (lowerBound != OpenMPLoopManager::InvalidLoopBound() && upperBound != OpenMPLoopManager::InvalidLoopBound()) {
+        // if both bound are resolvable
+        if (std::max(lowerBound, upperBound) < (distance / loopStep)) {
+          return false;
         }
       }
     }
+  } else {
+    // the parallel loop has nested loop inside
+
   }
 
   // If unsure report they do alias
@@ -398,11 +392,11 @@ bool _inSameTeam(const Event* event1, const Event* event2) {
 // Get list of (non-nested) event regions
 // template definition can be in cpp as long as we dont expose the template outside of this file
 template <IR::Type Start, IR::Type End>
-std::vector<Region> getRegions(const ThreadTrace& thread) {
+std::vector<Region> getRegions(const ThreadTrace &thread) {
   std::vector<Region> regions;
 
   std::optional<EventID> start;
-  for (auto const& event : thread.getEvents()) {
+  for (auto const &event : thread.getEvents()) {
     switch (event->getIRInst()->type) {
       case Start: {
         assert(!start.has_value() && "encountered two start types in a row");
@@ -470,7 +464,7 @@ auto const _inSameSingleBlock = inSame<IR::Type::OpenMPSingleStart, IR::Type::Op
 
 }  // namespace
 
-const std::vector<OpenMPAnalysis::LoopRegion>& OpenMPAnalysis::getOmpForLoops(const ThreadTrace& thread) {
+const std::vector<OpenMPAnalysis::LoopRegion> &OpenMPAnalysis::getOmpForLoops(const ThreadTrace &thread) {
   // Check if result is already computed
   auto it = ompForLoops.find(thread.id);
   if (it != ompForLoops.end()) {
@@ -484,10 +478,10 @@ const std::vector<OpenMPAnalysis::LoopRegion>& OpenMPAnalysis::getOmpForLoops(co
   return ompForLoops.at(thread.id);
 }
 
-bool OpenMPAnalysis::inParallelFor(const race::MemAccessEvent* event) {
+bool OpenMPAnalysis::inParallelFor(const race::MemAccessEvent *event) {
   auto loopRegions = getOmpForLoops(event->getThread());
   auto const eid = event->getID();
-  for (auto const& region : loopRegions) {
+  for (auto const &region : loopRegions) {
     if (region.contains(eid)) return true;
     // Break early if we pass the eid without finding matching region
     if (region.end > eid) return false;
@@ -496,7 +490,7 @@ bool OpenMPAnalysis::inParallelFor(const race::MemAccessEvent* event) {
   return false;
 }
 
-bool OpenMPAnalysis::isLoopArrayAccess(const race::MemAccessEvent* event1, const race::MemAccessEvent* event2) {
+bool OpenMPAnalysis::isLoopArrayAccess(const race::MemAccessEvent *event1, const race::MemAccessEvent *event2) {
   auto gep1 = getArrayAccess(event1);
   if (!gep1) return false;
 
@@ -568,8 +562,13 @@ std::vector<const llvm::BasicBlock*>& ReduceAnalysis::computeGuardedBlocks(Reduc
     worklist.pop_back();
     visited.insert(block);
 
+<<<<<<< HEAD
     // Stop traversing when we reach end of reduce code
     if (block == exitBlock) continue;
+=======
+bool OpenMPAnalysis::inSameSingleBlock(const Event *event1, const Event *event2) const {
+  assert(inSameTeam(event1, event2));
+>>>>>>> 343b128 (better constant propagation + fix misuse of noalias)
 
     // add to list of blocks covered by this reduce
     blocks.push_back(block);
@@ -577,6 +576,7 @@ std::vector<const llvm::BasicBlock*>& ReduceAnalysis::computeGuardedBlocks(Reduc
     // sanity check that all succ must eventually reach exitBlock
     assert(llvm::succ_size(block) > 0 && "block should have successors");
 
+<<<<<<< HEAD
     // Keep traversing
     for (auto const succ : llvm::successors(block)) {
       if (visited.find(succ) == visited.end()) {
@@ -586,6 +586,13 @@ std::vector<const llvm::BasicBlock*>& ReduceAnalysis::computeGuardedBlocks(Reduc
       }
     }
   }
+=======
+  // Omp threads in same team will have identical traces so we only need one set of events
+  auto const singleRegions = getSingleRegions(event1->getThread());
+  for (auto const &region : singleRegions) {
+    // If region contains one, check if it also contains the other
+    if (region.contains(minID)) return region.contains(maxID);
+>>>>>>> 343b128 (better constant propagation + fix misuse of noalias)
 
   return blocks;
 }
@@ -627,4 +634,3 @@ bool OpenMPAnalysis::inSameReduce(const Event* event1, const Event* event2) cons
 
   return false;
 }
-
