@@ -12,7 +12,8 @@ set(pta-lib-sources
     PointerAnalysis/Model/CppMemModel/RewriteModeledAPIPass.cpp
     PointerAnalysis/Util/Util.cpp
     PointerAnalysis/Util/TypeMetaData.cpp
-    
+
+    PreProcessing/Passes/OMPConstantPropPass.cpp
     PreProcessing/Passes/CanonicalizeGEPPass.cpp
     PreProcessing/Passes/InsertGlobalCtorCallPass.cpp
     PreProcessing/Passes/LoweringMemCpyPass.cpp

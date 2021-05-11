@@ -11,7 +11,10 @@ limitations under the License.
 
 #include "PreProcessing/PreProcessing.h"
 
+#include <llvm/Analysis/TypeBasedAliasAnalysis.h>
+#include <llvm/Analysis/ScopedNoAliasAA.h>
 #include <llvm/Passes/PassBuilder.h>
+#include <llvm/Transforms/IPO/AlwaysInliner.h>
 #include <llvm/Transforms/InstCombine/InstCombine.h>
 #include <llvm/Transforms/Scalar/EarlyCSE.h>
 #include <llvm/Transforms/Scalar/IndVarSimplify.h>
@@ -28,8 +31,19 @@ limitations under the License.
 
 #include "PreProcessing/Passes/CanonicalizeGEPPass.h"
 #include "PreProcessing/Passes/DuplicateOpenMPForks.h"
+#include "PreProcessing/Passes/OMPConstantPropPass.h"
+
+static void markOMPDebugAlwaysInline(llvm::Module &module) {
+  for (auto &F : module) {
+    if (!F.isDeclaration() && F.getName().startswith(".omp_outlined._debug")) {
+      F.addFnAttr(llvm::Attribute::AttrKind::AlwaysInline);
+    }
+  }
+}
 
 void preprocess(llvm::Module &module) {
+  markOMPDebugAlwaysInline(module);
+
   llvm::PassBuilder pb;
 
   llvm::LoopAnalysisManager lam;
@@ -68,11 +82,25 @@ void preprocess(llvm::Module &module) {
 
   fpm.addPass(llvm::MemCpyOptPass());
   fpm.addPass(llvm::SCCPPass());
-  fpm.addPass(CanonicalizeGEPPass());
+  //fpm.addPass(CanonicalizeGEPPass());
 
   llvm::ModulePassManager mpm;
   mpm.addPass(llvm::createModuleToFunctionPassAdaptor(std::move(fpm)));
+  mpm.addPass(llvm::AlwaysInlinerPass());
+  mpm.addPass(OMPConstantPropPass());
+
   mpm.run(module, mam);
+
+  // CanonicalizeGEPPass has to run after OMPConstantPropPass
+  // as it will expand constant expression
+  // but is it the right way to do it like this?
+  // or we can simply make it a module pass?
+  // or simply call a function just like duplicateOpenMPForks below?
+  llvm::FunctionPassManager fpmPost;
+  fpmPost.addPass(CanonicalizeGEPPass());
+  for (auto &F : module) {
+    fpmPost.run(F, fam);
+  }
 
   duplicateOpenMPForks(module);
 }

@@ -310,8 +310,8 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
   // during the computation between two scev expression.
   scev1 = rewriter.visit(scev1);
   scev2 = rewriter.visit(scev2);
-
-  auto diff = dyn_cast<SCEVConstant>(scev.getMinusSCEV(scev1, scev2));
+  auto tmp = scev.getMinusSCEV(scev1, scev2);
+  auto diff = dyn_cast<SCEVConstant>(tmp);
 
   if (diff == nullptr) {
     // TODO: we are unable to analyze unknown gap array index for now.
@@ -356,8 +356,12 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent* event1, const r
           int64_t lowerBound = std::abs(bounds.first);
           int64_t upperBound = std::abs(bounds.second);
 
-          if (std::max(lowerBound, upperBound) < (distance / loopStep)) {
-            return false;
+          if (lowerBound != OpenMPLoopManager::InvalidLoopBound() &&
+              upperBound != OpenMPLoopManager::InvalidLoopBound()) {
+            // if both bound are resolvable
+            if (std::max(lowerBound, upperBound) < (distance / loopStep)) {
+              return false;
+            }
           }
         }
       }
