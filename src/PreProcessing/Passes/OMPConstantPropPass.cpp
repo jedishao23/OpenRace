@@ -223,11 +223,11 @@ static bool PropagateConstantsIntoArguments(Function &F, const DominatorTree &DT
         if (auto defVal = dyn_cast<Constant>(SI->getValueOperand())) {
           // there is a unique constant def value
           // if in current function, only load instruction exist, the loaded value should be equal to
-          bool readOnly = true;
           SmallVector<LoadInst *, 8> loadVec;
           for (auto &U : F.getArg(i)->uses()) {
             if (isa<StoreInst>(U.getUser())) {
               loadVec.clear();
+              break;
             } else if (auto LI = dyn_cast<LoadInst>(U.getUser())) {
               loadVec.push_back(LI);
             }
