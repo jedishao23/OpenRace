@@ -49,7 +49,6 @@ class OpenMPLoopManager {
   Function *F;
 
   // dependent pass from LLVM
-  // LoopInfo *LI;
   DominatorTree *DT;
 
   // cached result. TODO: use const pointer
@@ -64,7 +63,6 @@ class OpenMPLoopManager {
   // constructor
   OpenMPLoopManager(AnalysisManager<Function> &FAM, Function &fun)
       : F(&fun),
-        // LI(&FAM.getResult<LoopAnalysis>(fun)),
         DT(&FAM.getResult<DominatorTreeAnalysis>(fun)) {
     init();
   }
@@ -416,7 +414,6 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
                                       scev.getMinusSCEV(n2, b2)};
 
     if (std::all_of(gaps.begin(), gaps.end(), [](const SCEV *expr)->bool {
-          expr->dump();
           if (auto constExpr = dyn_cast<SCEVConstant>(expr)) {
             if (constExpr->getAPInt().isNonPositive()) {
               // the gaps are smaller or equal to zero
