@@ -28,3 +28,10 @@ TEST_CASE("OpenMP Integration Tests", "[integration][omp]") {
 
   checkOracles(oracles, "integration/openmp/");
 }
+
+TEST_CASE("OpenMP Array Index Analysis Integration Tests", "[integration][omp]") {
+  std::vector<Oracle> oracles = {
+      Oracle("array-index-simple.ll", {"array-index-simple.c:8:10 array-index-simple.c:8:12"})};
+
+  checkOracles(oracles, "integration/openmp/");
+}
