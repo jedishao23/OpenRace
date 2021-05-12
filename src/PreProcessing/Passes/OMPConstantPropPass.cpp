@@ -25,8 +25,8 @@ using namespace llvm;
 DEBUG_COUNTER(CPCounter, "constprop-transform", "Controls which instructions are killed");
 
 static inline bool hasGlobalOverwritten(GlobalVariable *GV) {
-  for (auto &use : GV->uses()) {
-    if (isa<StoreInst>(use)) {
+  for (auto user : GV->users()) {
+    if (isa<StoreInst>(user)) {
       return true;
     }
   }
