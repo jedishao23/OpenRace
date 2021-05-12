@@ -421,8 +421,9 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
             if (constExpr->getAPInt().isNonPositive()) {
               // the gaps are smaller or equal to zero
               return false;
+            } else {
+              return true;
             }
-            return true;
           }
           return false; })) {
 
