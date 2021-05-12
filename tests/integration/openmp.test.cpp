@@ -34,8 +34,8 @@ TEST_CASE("OpenMP Array Index Analysis Integration Tests", "[integration][omp]")
       Oracle("array-index-simple.ll", {"array-index-simple.c:8:10 array-index-simple.c:8:12"}),
       Oracle("array-index-inner-yes.ll", {"array-index-inner-yes.c:10:15 array-index-inner-yes.c:10:17"}),
       Oracle("array-index-outer-yes.ll", {"array-index-outer-yes.c:10:15 array-index-outer-yes.c:10:17"}),
-      // Oracle("array-multi-dimen-no.ll", {}), // FP on i?
-      // Oracle("array-stride-2.ll", {}),  // FP
+      //Oracle("array-multi-dimen-no.ll", {}), // FP on i?
+      Oracle("array-stride-2.ll", {}),
   };
 
   checkOracles(oracles, "integration/openmp/");

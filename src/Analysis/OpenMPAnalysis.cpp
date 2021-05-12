@@ -311,12 +311,7 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
   }
 
   auto &targetFun = *const_cast<llvm::Function *>(gep1->getFunction());
-  static OpenMPLoopManager ompManager(FAM, targetFun);
-
-  if (&targetFun != ompManager.getTargetFunction()) {
-    // we are now analyzing a new function
-    ompManager.rebuildWith(FAM, targetFun);
-  }
+  OpenMPLoopManager ompManager(FAM, targetFun);
 
   // TODO: get rid of const cast? Also does FAM cache these results (I think it does?)
   auto &LI = FAM.getResult<LoopAnalysis>(targetFun);
@@ -379,6 +374,10 @@ bool OpenMPAnalysis::canIndexOverlap(const race::MemAccessEvent *event1, const r
       // assume we iterate at least one time
       if (distance == loopStep) {
         return true;
+      }
+
+      if (distance < loopStep) {
+        return false;
       }
 
       CallBase *initForCall = ompManager.getStaticInitCallIfExist(omp1->getLoop());
