@@ -207,6 +207,22 @@ class LockIRImpl : public LockIR {
   static inline bool classof(const IR *e) { return e->type == T; }
 };
 
+class OpenMPCriticalStart: public LockIR {
+  const unsigned int criticalEntryOffset = 2;
+  const llvm::CallBase *inst;
+
+ public:
+  explicit OpenMPCriticalStart(const llvm::CallBase *call) : LockIR(Type::OpenMPCriticalStart), inst(call) {}
+
+  [[nodiscard]] inline const llvm::CallBase *getInst() const override { return inst; }
+
+  [[nodiscard]] const llvm::Value *getLockValue() const override {
+    return inst->getArgOperand(criticalEntryOffset)->stripPointerCasts();
+  }
+
+  static inline bool classof(const IR *e) { return e->type == Type::OpenMPCriticalStart; }
+};
+
 // NOTE: if a specific API semantic is the same as default impl,
 // create a type alias.
 using PthreadMutexLock = LockIRImpl<IR::Type::PthreadMutexLock>;
@@ -234,6 +250,22 @@ class UnlockIRImpl : public UnlockIR {
 
   // Used for llvm style RTTI (isa, dyn_cast, etc.)
   static inline bool classof(const IR *e) { return e->type == T; }
+};
+
+class OpenMPCriticalEnd : public UnlockIR {
+  const unsigned int criticalEndOffset = 2;
+  const llvm::CallBase *inst;
+
+ public:
+  explicit OpenMPCriticalEnd(const llvm::CallBase *call) : UnlockIR(Type::OpenMPCriticalEnd), inst(call) {}
+
+  [[nodiscard]] inline const llvm::CallBase *getInst() const override { return inst; }
+
+  [[nodiscard]] const llvm::Value *getLockValue() const override {
+    return inst->getArgOperand(criticalEndOffset)->stripPointerCasts();
+  }
+
+  static inline bool classof(const IR *e) { return e->type == Type::OpenMPCriticalEnd; }
 };
 
 // NOTE: if a specific API semantic is the same as default impl,
