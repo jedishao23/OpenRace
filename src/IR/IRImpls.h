@@ -207,7 +207,7 @@ class LockIRImpl : public LockIR {
   static inline bool classof(const IR *e) { return e->type == T; }
 };
 
-class OpenMPCriticalStart: public LockIR {
+class OpenMPCriticalStart : public LockIR {
   // https://github.com/llvm/llvm-project/blob/ef32c611aa214dea855364efd7ba451ec5ec3f74/openmp/runtime/src/kmp_csupport.cpp#L1157
   // @param loc  source location information
   // @param global_tid  global thread number
@@ -233,6 +233,8 @@ class OpenMPCriticalStart: public LockIR {
 using PthreadMutexLock = LockIRImpl<IR::Type::PthreadMutexLock>;
 using PthreadSpinLock = LockIRImpl<IR::Type::PthreadSpinLock>;
 
+// https://github.com/llvm/llvm-project/blob/ef32c611aa214dea855364efd7ba451ec5ec3f74/openmp/runtime/src/kmp_csupport.cpp#L2549
+using OpenMPSetLock = LockIRImpl<IR::Type::OpenMPSetLock>;
 // ==================================================================
 // ================= UnlockIR Implementations =======================
 // ==================================================================
@@ -283,6 +285,8 @@ class OpenMPCriticalEnd : public UnlockIR {
 using PthreadMutexUnlock = UnlockIRImpl<IR::Type::PthreadMutexUnlock>;
 using PthreadSpinUnlock = UnlockIRImpl<IR::Type::PthreadSpinUnlock>;
 
+// https://github.com/llvm/llvm-project/blob/ef32c611aa214dea855364efd7ba451ec5ec3f74/openmp/runtime/src/kmp_csupport.cpp#L2752
+using OpenMPUnsetLock = UnlockIRImpl<IR::Type::OpenMPUnsetLock>;
 // =================================================================
 // ================= Barrier Implementations =======================
 // =================================================================
@@ -319,5 +323,8 @@ using OpenMPSingleStart = CallIRImpl<IR::Type::OpenMPSingleStart>;
 using OpenMPSingleEnd = CallIRImpl<IR::Type::OpenMPSingleEnd>;
 
 using OpenMPReduce = CallIRImpl<IR::Type::OpenMPReduce>;
+
+using OpenMPMasterStart = CallIRImpl<IR::Type::OpenMPMasterStart>;
+using OpenMPMasterEnd = CallIRImpl<IR::Type::OpenMPMasterEnd>;
 
 }  // namespace race

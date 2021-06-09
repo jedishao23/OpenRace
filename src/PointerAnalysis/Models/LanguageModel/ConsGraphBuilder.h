@@ -9,11 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 10/22/19.
-//
-#ifndef PTA_CONSGRAPHBUILDER_H
-#define PTA_CONSGRAPHBUILDER_H
+#pragma once
 
 #include <llvm/ADT/SparseBitVector.h>
 #include <llvm/Demangle/Demangle.h>
@@ -22,16 +18,14 @@ limitations under the License.
 
 #include <unordered_map>
 
+#include "Logging/Log.h"
 #include "PointerAnalysis/Graph/ConstraintGraph/ConstraintGraph.h"
 #include "PointerAnalysis/Models/LanguageModel/PtrNodeManager.h"
 #include "PointerAnalysis/Models/MemoryModel/MemModelTrait.h"
-#include "PointerAnalysis/Models/MemoryModel/Object.h"
-#include "PointerAnalysis/Models/MemoryModel/SpecialObjects/MapObject.h"
 #include "PointerAnalysis/Program/CallSite.h"
 #include "PointerAnalysis/Program/CtxModule.h"
+#include "PointerAnalysis/Program/Object.h"
 #include "PointerAnalysis/Program/Pointer.h"
-//#include "aser/PreProcessing/Passes/RemoveExceptionHandlerPass.h"
-#include "Logging/Log.h"
 #include "PointerAnalysis/Util/CtxInstVisitor.h"
 #include "PointerAnalysis/Util/GraphWriter.h"
 #include "PointerAnalysis/Util/SingleInstanceOwner.h"
@@ -187,15 +181,10 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
       // since indirect call resolution will add more elements to the pts
       // and thus corrupt the iterator
       typename PT::PtsTy pointsTo(PT::getPointsTo(ptrID));
-      // llvm::outs() << " funcPtr pta size:" << pointsTo.count()
-      //              << " graph nodes: " <<
-      //              funPtrNode->getIndirectNodes().size() << "\n";
 
       // TODO: track if the points-to of a funcPtr has changed?
       // TODO: maintain a map from funcPtr to its newly added function object?
-      // JEFF: this can be redundant since pointsTo is repeatedly traversed??
-      uint8_t count = 0;
-      // bool applyLimit = true;
+      // uint8_t count = 0;
 
       for (auto it = pointsTo.begin(), eit = pointsTo.end(); it != eit; it++) {
         // count++;
@@ -399,53 +388,36 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
     module->buildInitCallGraph(beforeNewNode, onNewDirect, onNewInDirect, onNewEdge);
   }
 
-  // [[nodiscard]] inline const CallGraphNode<ctx> *getDirectNode(const ctx *C,
-  // const llvm::Function *F) {
-  //     return module->getDirectNode(C, F);
-  // }
-
-  // [[nodiscard]] inline const CallGraphNode<ctx> *getDirectNodeOrNull(const
-  // ctx *C, const llvm::Function *F) {
-  //     return module->getDirectNodeOrNull(C, F);
-  // }
-
-  // [[nodiscard]] inline const CallGraphNode<ctx> *getInDirectNode(const ctx
-  // *C, const llvm::Instruction *I) {
-  //     return module->getInDirectNode(C, I);
-  // }
-
   inline const llvm::Module *getLLVMModule() const { return this->module->getLLVMModule(); }
 
   inline llvm::StringRef getEntryName() const { return this->module->getEntryName(); }
 
  public:
   ConsGraphBuilder(llvm::Module *M, llvm::StringRef entry)
-      : beforeNewNode{.self = *this},
-        onNewDirect{.self = *this},
-        onNewInDirect{.self = *this},
-        onNewEdge{.self = *this},      // callbacks
-        consGraph(new ConsGraphTy()),  // the constraint graph
-        memModel(*consGraph.get(), *this, *M),
-        module(new CtxModule<ctx>(M, entry)) {  // the module represent the programs
-
+      : module(new CtxModule<ctx>(M, entry)),
+        consGraph(new ConsGraphTy()),           // the constraint graph
+        memModel(*consGraph.get(), *this, *M),  // the module represent the programs
+        beforeNewNode{*this},
+        onNewDirect{*this},
+        onNewInDirect{*this},
+        onNewEdge{*this} {  // callbacks
     // init the pointer node manager
     PtrNodeManager<ctx>::template init<PT>(consGraph.get(), M->getContext());
 
     Object<ctx, ObjT>::resetObjectID();
+
     // null and universal object nodes;
     CGNodeBase<ctx> *nullObj = ALLOCATE(NullObj, module->getLLVMModule());
     CGNodeBase<ctx> *uniObj = ALLOCATE(UniObj, module->getLLVMModule());
 
-    // uncomments this if you want the special nodes to appear in the points to
-    // set
-    // TODO: add a parameters for this.
-    /*
+    // enable this if you want the special nodes to appear in the points to set
+#ifdef SPECIAL_NODE_IN_PTS
     consGraph->addConstraints(nullObj, nullPtrNode, Constraints::addr_of);
     PT::insert(nullPtrNode->getNodeID(), nullObj->getNodeID());
 
     consGraph->addConstraints(uniObj, uniPtrNode, Constraints::addr_of);
     PT::insert(uniPtrNode->getNodeID(), uniObj->getNodeID());
-    */
+#endif
   }
 
   [[nodiscard]] inline const CallGraphNode<ctx> *getDirectNode(const ctx *C, const llvm::Function *F) const {
@@ -462,9 +434,6 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
 
   friend SubClass;
   friend llvm::CtxInstVisitor<ctx, SubClass>;
-
-  template <typename Key, typename PT>
-  friend class MapObject;
 
  protected:
   inline void constructConsGraph() {
@@ -547,7 +516,7 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
       // store a pointer into memory
       // store *src into **dst
 #ifndef NDEBUG
-      const llvm::Value *src = Canonicalizer::canonicalize(I.getValueOperand());
+      // const llvm::Value *src = Canonicalizer::canonicalize(I.getValueOperand());
       const llvm::Value *dst = Canonicalizer::canonicalize(I.getPointerOperand());
 
       if (dst == this->getUniPtr()->getPointer()->getValue() || dst == this->getNullPtr()->getPointer()->getValue()) {
@@ -560,13 +529,6 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
         return;
       }
 
-      // assert(dst != uniPtrNode->getPointer()->getValue() && "store into
-      // universal ptr?"); assert(dst != nullPtrNode->getPointer()->getValue()
-      // && "store into null ptr?");
-
-      // it is possible for src and dst to be the same
-      // for example, the address of a field can be store into another field
-      // assert(src != dst);
 #endif
       CGPtrNode<ctx> *srcNode = this->getOrCreatePtrNode(context, operand);
       CGPtrNode<ctx> *dstNode = this->getOrCreatePtrNode(context, I.getPointerOperand());
@@ -635,32 +597,35 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
   inline void visitExtractValueInst(llvm::ExtractValueInst &I, const ctx *context) {
     if (I.getType()->isPointerTy()) {
       LOG_TRACE("Extract a pointer is not handled! inst={}", I);
-      auto dst = this->getOrCreatePtrNode(context, &I);
+      // auto dst = this->getOrCreatePtrNode(context, &I); // bz: comment off to avoid -Wunused-variable on dst, this
+      // needs to be kept for future use
     }
   }
 
-  inline void visitInsertValueInst(llvm::InsertValueInst &I, const ctx *context) {}
+  // bz: the following functions are not implemented/finished, comment off to avoid warnings; add back if requiring
+  // changes inline void visitInsertValueInst(llvm::InsertValueInst &I, const ctx *context) {}
 
-  // corner cases
-  inline void visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &I, const ctx *context) {}
-  inline void visitAtomicRMWInst(llvm::AtomicRMWInst &I, const ctx *context) {}
-  inline void visitVAArgInst(llvm::VAArgInst &I, const ctx *context) {}
+  // // corner cases
+  // inline void visitAtomicCmpXchgInst(llvm::AtomicCmpXchgInst &I, const ctx *context) {}
+  // inline void visitAtomicRMWInst(llvm::AtomicRMWInst &I, const ctx *context) {}
+  // inline void visitVAArgInst(llvm::VAArgInst &I, const ctx *context) {}
 
-  // vector operations
-  inline void visitExtractElementInst(llvm::ExtractElementInst &I, const ctx *context) {}
-  inline void visitInsertElementInst(llvm::InsertElementInst &I, const ctx *context) {}
-  inline void visitShuffleVectorInst(llvm::ShuffleVectorInst &I, const ctx *context) {}
+  // // vector operations
+  // inline void visitExtractElementInst(llvm::ExtractElementInst &I, const ctx *context) {}
+  // inline void visitInsertElementInst(llvm::InsertElementInst &I, const ctx *context) {}
+  // inline void visitShuffleVectorInst(llvm::ShuffleVectorInst &I, const ctx *context) {}
 
-  // instrinsic instruction classes.
-  inline void visitMemSetInst(llvm::MemSetInst &I, const ctx *context) {}
-  inline void visitMemMoveInst(llvm::MemMoveInst &I, const ctx *context) {}
+  // // instrinsic instruction classes.
+  // inline void visitMemSetInst(llvm::MemSetInst &I, const ctx *context) {}
+  // inline void visitMemMoveInst(llvm::MemMoveInst &I, const ctx *context) {}
 
-  // need to be handled? but no one use it.
-  inline void visitVAStartInst(llvm::VAStartInst &I, const ctx *context) {}
-  inline void visitVAEndInst(llvm::VAEndInst &I, const ctx *context) {}
-  inline void visitVACopyInst(llvm::VACopyInst &I, const ctx *context) {}
+  // // need to be handled? but no one use it.
+  // inline void visitVAStartInst(llvm::VAStartInst &I, const ctx *context) {}
+  // inline void visitVAEndInst(llvm::VAEndInst &I, const ctx *context) {}
+  // inline void visitVACopyInst(llvm::VACopyInst &I, const ctx *context) {}
 
   inline void visitFreezeInst(llvm::FreezeInst &I, const ctx *context) {}
+
   // getters
   inline MemModel &getMemModel() { return memModel; }
 
@@ -715,5 +680,3 @@ struct hash<pair<T1 *, T2 *>> {
 
 #undef MODEL
 #undef ALLOCATE
-
-#endif

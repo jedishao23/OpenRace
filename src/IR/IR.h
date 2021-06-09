@@ -41,11 +41,13 @@ class IR {
     PthreadMutexLock,
     PthreadSpinLock,
     OpenMPCriticalStart,
+    OpenMPSetLock,
     END_Lock,
     Unlock,
     PthreadMutexUnlock,
     PthreadSpinUnlock,
     OpenMPCriticalEnd,
+    OpenMPUnsetLock,
     END_Unlock,
     Barrier,
     OpenMPBarrier,
@@ -56,6 +58,8 @@ class IR {
     OpenMPSingleStart,
     OpenMPSingleEnd,
     OpenMPReduce,
+    OpenMPMasterStart,
+    OpenMPMasterEnd,
     END_Call
   } type;
   [[nodiscard]] virtual const llvm::Instruction *getInst() const = 0;

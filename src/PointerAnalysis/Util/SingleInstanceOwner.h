@@ -9,11 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 8/29/19.
-//
-#ifndef PTA_SINGLEINSTANCEOWNER_H
-#define PTA_SINGLEINSTANCEOWNER_H
+#pragma once
 
 #include <unordered_set>
 
@@ -22,7 +18,8 @@ namespace pta {
 template <typename T>
 class SingleInstanceOwner {
  protected:
-  std::unordered_set<T> innerSet;  // TODO: maybe other container is faster?
+  // TODO: maybe other container is faster?
+  std::unordered_set<T> innerSet;
   using iterator = typename std::unordered_set<T>::iterator;
 
   // create if does not exist
@@ -84,5 +81,3 @@ class SingleInstanceOwner {
 };
 
 }  // namespace pta
-
-#endif

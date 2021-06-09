@@ -9,12 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 1/16/20.
-//
-
-#ifndef PTA_LANGMODELBASE_H
-#define PTA_LANGMODELBASE_H
+#pragma once
 
 #include "ConsGraphBuilder.h"
 #include "PointerAnalysis/Util/Util.h"
@@ -34,12 +29,6 @@ class LangModelBase : public ConsGraphBuilder<ctx, MemModel, PtsTy, SubClass> {
   inline bool isCompatible(const llvm::Instruction *callsite, const llvm::Function *target) {
     llvm_unreachable("SubClass should override the function!");
   }
-
-  //    // determine whether the API is a heap allocation API
-  //    inline bool isExtHeapAllocAPI(const llvm::Function *F, const
-  //    llvm::Instruction *callSite) {
-  //        llvm_unreachable("SubClass should override the function!");
-  //    }
 
   // modelling the heap allocation
   inline void interceptHeapAllocSite(const CtxFunction<ctx> *caller, const CtxFunction<ctx> *callee,
@@ -85,8 +74,8 @@ class LangModelBase : public ConsGraphBuilder<ctx, MemModel, PtsTy, SubClass> {
     }
   }
 
-  inline IndirectResolveOption onNewIndirectTargetResolvation(const llvm::Function *F,
-                                                              const llvm::Instruction *callsite) {
+  inline IndirectResolveOption onNewIndirectTargetResolvation(const llvm::Function * /* F */,
+                                                              const llvm::Instruction * /* callsite */) {
     // by default
     return IndirectResolveOption::WITH_LIMIT;
   }
@@ -106,14 +95,6 @@ class LangModelBase : public ConsGraphBuilder<ctx, MemModel, PtsTy, SubClass> {
   using CGNodeTy = typename Super::CGNodeTy;
   using ObjNode = typename Super::ObjNode;
   using PtrNode = typename Super::PtrNode;
-
-  template <typename KeyT>
-  [[nodiscard]] inline MapObject<KeyT, Self> *getOrAllocMapObj(const ctx *context, const void *tag) {
-    using MapObjKeyT = std::pair<const ctx *, const void *>;
-    static llvm::DenseMap<MapObjKeyT, MapObject<KeyT, Self>> mapObjMap;
-
-    return &mapObjMap.try_emplace(std::make_pair(context, tag), *this).first->second;
-  }
 
   // return true if the function need to be expanded in callgraph.
   inline InterceptResult overrideFunction(const ctx *callerCtx, const ctx *calleeCtx, const llvm::Function *F,
@@ -285,4 +266,3 @@ struct LangModelTrait<LangModelBase<ctx, MemModel, PtsTy, SubClass>> {
 };
 
 }  // namespace pta
-#endif

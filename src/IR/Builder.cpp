@@ -12,20 +12,26 @@ limitations under the License.
 #include "IR/Builder.h"
 
 #include <llvm/Analysis/PostDominators.h>
+#include <llvm/Analysis/ScopedNoAliasAA.h>
 #include <llvm/IR/Dominators.h>
 #include <llvm/IR/Instructions.h>
 
 #include "IR/IRImpls.h"
+#include "LanguageModel/LLVMInstrinsics.h"
 #include "LanguageModel/OpenMP.h"
 #include "LanguageModel/pthread.h"
 
 using namespace race;
 
 namespace {
-bool hasNoAliasMD(const llvm::Instruction *inst) {
-  llvm::AAMDNodes AAMD;
-  inst->getAAMetadata(AAMD);
-  return AAMD.NoAlias != nullptr;
+
+bool hasThreadLocalOperand(const llvm::Instruction *inst) {
+  auto ptr = getPointerOperand(inst);
+  assert(ptr);
+  if (auto global = llvm::dyn_cast<llvm::GlobalVariable>(ptr)) {
+    return global->isThreadLocal();
+  }
+  return false;
 }
 
 // Assuming ompForkCall points to a OpenMP fork call, the next inst should be a duplicate omp fork call
@@ -46,10 +52,6 @@ std::shared_ptr<OpenMPFork> getTwinOmpFork(const llvm::CallBase *ompForkCall) {
 
 // TODO: need different system for storing and organizing these "recognizers"
 bool isPrintf(const llvm::StringRef &funcName) { return funcName.equals("printf"); }
-bool isLLVMDebug(const llvm::StringRef &funcName) {
-  return funcName.equals("llvm.dbg.declare") || funcName.equals("llvm.dbg.value");
-}
-
 }  // namespace
 
 FunctionSummary race::generateFunctionSummary(const llvm::Function *func) {
@@ -66,21 +68,15 @@ FunctionSummary race::generateFunctionSummary(const llvm::Function &func) {
 
       // TODO: try switch on inst->getOpCode instead
       if (auto loadInst = llvm::dyn_cast<llvm::LoadInst>(inst)) {
-        if (loadInst->isAtomic() || loadInst->isVolatile() || hasNoAliasMD(loadInst)) {
+        if (loadInst->isAtomic() || loadInst->isVolatile() || hasThreadLocalOperand(loadInst)) {
           continue;
         }
         instructions.push_back(std::make_shared<race::Load>(loadInst));
       } else if (auto storeInst = llvm::dyn_cast<llvm::StoreInst>(inst)) {
-        if (storeInst->isAtomic() || storeInst->isVolatile() || hasNoAliasMD(storeInst)) {
+        if (storeInst->isAtomic() || storeInst->isVolatile() || hasThreadLocalOperand(storeInst)) {
           continue;
         }
         instructions.push_back(std::make_shared<race::Store>(storeInst));
-      } else if (auto retInst = llvm::dyn_cast<llvm::ReturnInst>(inst)) {
-        // TODO: what should this do?
-      } else if (auto branchInst = llvm::dyn_cast<llvm::BranchInst>(inst)) {
-        // TODO: what should this do?
-      } else if (auto switchInst = llvm::dyn_cast<llvm::SwitchInst>(inst)) {
-        // TODO: what should this do?
       } else if (auto callInst = llvm::dyn_cast<llvm::CallBase>(inst)) {
         if (callInst->isIndirectCall()) {
           // let trace deal with indirect calls
@@ -97,7 +93,9 @@ FunctionSummary race::generateFunctionSummary(const llvm::Function &func) {
 
         // TODO: System for users to register new function recognizers here
         auto funcName = calledFunc->getName();
-        if (PthreadModel::isPthreadCreate(funcName)) {
+        if (LLVMModel::isNoEffect(funcName)) {
+          /* Do nothing */
+        } else if (PthreadModel::isPthreadCreate(funcName)) {
           instructions.push_back(std::make_shared<PthreadCreate>(callInst));
         } else if (PthreadModel::isPthreadJoin(funcName)) {
           instructions.push_back(std::make_shared<PthreadJoin>(callInst));
@@ -117,17 +115,25 @@ FunctionSummary race::generateFunctionSummary(const llvm::Function &func) {
           instructions.push_back(std::make_shared<OpenMPSingleStart>(callInst));
         } else if (OpenMPModel::isSingleEnd(funcName)) {
           instructions.push_back(std::make_shared<OpenMPSingleEnd>(callInst));
+        } else if (OpenMPModel::isMasterStart(funcName)) {
+          instructions.push_back(std::make_shared<OpenMPMasterStart>(callInst));
+        } else if (OpenMPModel::isMasterEnd(funcName)) {
+          instructions.push_back(std::make_shared<OpenMPMasterEnd>(callInst));
         } else if (OpenMPModel::isBarrier(funcName)) {
           instructions.push_back(std::make_shared<OpenMPBarrier>(callInst));
         } else if (OpenMPModel::isReduceStart(funcName)) {
           instructions.push_back(std::make_shared<OpenMPReduce>(callInst));
         } else if (OpenMPModel::isReduceNowaitStart(funcName)) {
           instructions.push_back(std::make_shared<OpenMPReduce>(callInst));
-        } else if (OpenMPModel::isCriticalStart(funcName)){
+        } else if (OpenMPModel::isCriticalStart(funcName)) {
           instructions.push_back(std::make_shared<OpenMPCriticalStart>(callInst));
-        }else if (OpenMPModel::isCriticalEnd(funcName)){
+        } else if (OpenMPModel::isCriticalEnd(funcName)) {
           instructions.push_back(std::make_shared<OpenMPCriticalEnd>(callInst));
-        }else if (OpenMPModel::isFork(funcName)) {
+        } else if (OpenMPModel::isSetLock(funcName)) {
+          instructions.push_back(std::make_shared<OpenMPSetLock>(callInst));
+        } else if (OpenMPModel::isUnsetLock(funcName)) {
+          instructions.push_back(std::make_shared<OpenMPUnsetLock>(callInst));
+        } else if (OpenMPModel::isFork(funcName)) {
           // duplicate omp preprocessing should duplicate all omp fork calls
           auto ompFork = std::make_shared<OpenMPFork>(callInst);
           auto twinOmpFork = getTwinOmpFork(callInst);
@@ -150,8 +156,6 @@ FunctionSummary race::generateFunctionSummary(const llvm::Function &func) {
           instructions.push_back(std::make_shared<OpenMPJoin>(twinOmpFork));
         } else if (isPrintf(funcName)) {
           // TODO: model as read?
-        } else if (isLLVMDebug(funcName)) {
-          // Skip
         } else {
           // Used to make sure we are not implicitly ignoring any OpenMP features
           // We should instead make sure we take the correct action for any OpenMP call

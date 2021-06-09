@@ -9,17 +9,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 8/26/19.
-//
-#ifndef PTA_CONSTRAINTGRAPH_H
-#define PTA_CONSTRAINTGRAPH_H
+#pragma once
 
 #include "CGObjNode.h"
 #include "CGPtrNode.h"
 #include "PointerAnalysis/Graph/GraphBase/GraphBase.h"
-#include "PointerAnalysis/Program/Program.h"
-#include "PointerAnalysis/Util/Statistics.h"
 #include "llvm/Support/DOTGraphTraits.h"
 
 #define DEBUG_TYPE "pta-cons-graph"
@@ -38,13 +32,9 @@ class ConstraintGraph : public GraphBase<CGNodeBase<ctx>, Constraints> {
  public:
   using CGNodeTy = CGNodeBase<ctx>;
   struct OnNewConstraintCallBack {
+    virtual ~OnNewConstraintCallBack() {}
     virtual void onNewConstraint(CGNodeTy *src, CGNodeTy *dst, Constraints constraint) = 0;
   };
-
-  LOCAL_STATISTIC(NumObjNode, "Number of Object Nodes");
-  LOCAL_STATISTIC(NumPtrNode, "Number of Pointer Nodes");
-  LOCAL_STATISTIC(NumConstraints, "Number of Constrains");
-  LOCAL_STATISTIC(NumNodes, "Number of Nodes in Total");
 
  private:
   OnNewConstraintCallBack *callBack;
@@ -97,7 +87,6 @@ class ConstraintGraph : public GraphBase<CGNodeBase<ctx>, Constraints> {
           // the edge is actually adding to the super node
           callBack->onNewConstraint(anonNode, dst->getSuperNode(), Constraints::copy);
         }
-        NumConstraints++;
         return true;
       }
       return false;
@@ -106,7 +95,6 @@ class ConstraintGraph : public GraphBase<CGNodeBase<ctx>, Constraints> {
       if (callBack && newEdge) {
         // the edge is actually adding to the super node
         callBack->onNewConstraint(src->getSuperNode(), dst->getSuperNode(), constraint);
-        NumConstraints++;
       }
 
       return newEdge;
@@ -165,7 +153,6 @@ class ConstraintGraph : public GraphBase<CGNodeBase<ctx>, Constraints> {
     PT::onNewNodeCreation(node->getNodeID());
 
     if (node->getType() == CGNodeKind::ObjNode) {
-      NumObjNode++;
       // create an anon node which take the address of the node
       // Convention! objnode_id + 1 = anonomyous node
       CGPtrNode<ctx> *anonNode = addCGNode<CGPtrNode<ctx>, PT>();
@@ -178,14 +165,11 @@ class ConstraintGraph : public GraphBase<CGNodeBase<ctx>, Constraints> {
         assert(objVec.size() == node->getObjectID());
         objVec.push_back(node);
       }
-    } else {
-      NumPtrNode++;
     }
-    NumNodes++;
     return node;
   }
 
-  ConstraintGraph() : GraphBase<CGNodeBase<ctx>, Constraints>(), objVec(), callBack(nullptr){};
+  ConstraintGraph() : GraphBase<CGNodeBase<ctx>, Constraints>(), callBack(nullptr), objVec(){};
 };
 
 }  // namespace pta
@@ -211,7 +195,7 @@ struct DOTGraphTraits<const pta::ConstraintGraph<ctx>> : public DefaultDOTGraphT
   static std::string getGraphName(const GraphTy &) { return "constraint_graph"; }
 
   /// Return function name;
-  static std::string getNodeLabel(const NodeTy *node, const GraphTy &graph) {
+  static std::string getNodeLabel(const NodeTy *node, const GraphTy & /* graph */) {
     std::string str;
     raw_string_ostream os(str);
 
@@ -219,7 +203,7 @@ struct DOTGraphTraits<const pta::ConstraintGraph<ctx>> : public DefaultDOTGraphT
     return os.str();
   }
 
-  static std::string getNodeAttributes(const NodeTy *node, const GraphTy &graph) {
+  static std::string getNodeAttributes(const NodeTy * /* node */, const GraphTy & /* graph */) {
     //        if (isa<CGPtrNode<ctx>>(node)) {
     //            return "";
     //        } else if (isa<CGSuperNode<ctx, PtsTy>>(node)) {
@@ -231,7 +215,7 @@ struct DOTGraphTraits<const pta::ConstraintGraph<ctx>> : public DefaultDOTGraphT
   }
 
   template <typename EdgeIter>
-  static std::string getEdgeAttributes(const NodeTy *node, EdgeIter EI, const GraphTy &graph) {
+  static std::string getEdgeAttributes(const NodeTy * /* node */, EdgeIter EI, const GraphTy & /* graph */) {
     pta::Constraints edgeTy = (*EI).first;
     switch (edgeTy) {
       case pta::Constraints::load:
@@ -254,5 +238,3 @@ struct DOTGraphTraits<const pta::ConstraintGraph<ctx>> : public DefaultDOTGraphT
 }  // namespace llvm
 
 #undef DEBUG_TYPE
-
-#endif

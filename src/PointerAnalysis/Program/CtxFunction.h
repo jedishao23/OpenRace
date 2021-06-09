@@ -9,11 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 10/30/19.
-//
-#ifndef PTA_CTXFUNCTION_H
-#define PTA_CTXFUNCTION_H
+#pragma once
 
 #include <llvm/Support/CommandLine.h>
 
@@ -23,6 +19,7 @@ namespace pta {
 
 template <typename ctx>
 class CallGraphNode;
+
 template <typename ctx>
 class CtxModule;
 
@@ -41,7 +38,7 @@ class CtxFunction {
 
  public:
   CtxFunction(const ctx *C, const llvm::Function *F, const llvm::Instruction *I, CallGraphNode<ctx> *N)
-      : context(C), function(F), callSite(I), callNode(N) {}
+      : context(C), function(F), callNode(N), callSite(I) {}
   CtxFunction(const CtxFunction<ctx> &&cf) noexcept
       : context(cf.context), function(cf.function), callNode(cf.callNode) {}
 
@@ -145,5 +142,3 @@ class InDirectCallSite {
 };
 
 }  // namespace pta
-
-#endif

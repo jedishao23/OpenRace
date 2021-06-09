@@ -9,11 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 9/3/19.
-//
-#ifndef PTA_GRAPHWRITER_H
-#define PTA_GRAPHWRITER_H
+#pragma once
 
 // a little modification on llvm build-in callgraph writer
 
@@ -177,13 +173,14 @@ class GraphWriter {
     // Output all of the edges now
     edge_iterator EI = GTraits::child_edge_begin(Node);
     edge_iterator EE = GTraits::child_edge_end(Node);
-    for (unsigned i = 0; EI != EE && i != 64; ++EI, ++i)
+    // bz: seems like the 2nd param of writeEdge will not exceed max int
+    for (int i = 0; EI != EE && i != 64; ++EI, ++i)
       if (!DTraits.isNodeHidden(GTraits::edge_dest(*EI))) writeEdge(Node, i, EI);
     for (; EI != EE; ++EI)
       if (!DTraits.isNodeHidden(GTraits::edge_dest(*EI))) writeEdge(Node, 64, EI);
   }
 
-  void writeEdge(NodeRef Node, unsigned edgeidx, edge_iterator EI) {
+  void writeEdge(NodeRef Node, int edgeidx, edge_iterator EI) {
     if (NodeRef TargetNode = GTraits::edge_dest(*EI)) {
       int DestPort = -1;
       if (DTraits.getEdgeSourceLabel(Node, EI).empty()) edgeidx = -1;
@@ -269,5 +266,3 @@ void WriteGraphToFile(const std::string &graphName, const GraphType &graph, bool
 }
 
 }  // namespace pta
-
-#endif

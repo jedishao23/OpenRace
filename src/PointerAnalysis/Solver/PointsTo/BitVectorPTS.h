@@ -9,11 +9,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-//
-// Created by peiming on 9/9/19.
-//
-#ifndef PTA_BITVECTORPTS_H
-#define PTA_BITVECTORPTS_H
+#pragma once
 
 #include <llvm/ADT/SparseBitVector.h>
 
@@ -65,7 +61,13 @@ class BitVectorPTS {
     }
 
     bool r = ptsVec[src] |= ptsVec[dst];
-    assert(ptsVec[src].find_last() < 0 ? true : ptsVec[src].find_last() < ptsVec.size());
+    // bz: this has no problem, but compiler won't git up warnings ... so translate equivalently
+    // assert(ptsVec[src].find_last() < 0 ? true : ptsVec[src].find_last() < ptsVec.size());
+    int _last = ptsVec[src].find_last();
+    if (_last >= 0) {
+      long unsigned int last = static_cast<long unsigned int>(_last);
+      assert(last < ptsVec.size());
+    }
     return r;
   }
 
@@ -79,7 +81,7 @@ class BitVectorPTS {
     assert(src < ptsVec.size() && dst < ptsVec.size());
     auto result = ptsVec[src] & ptsVec[dst];
 
-    for (int i = 0; i < NORMAL_OBJ_START_ID; i++) {
+    for (unsigned i = 0; i < NORMAL_OBJ_START_ID; i++) {
       // remove special node
       result.reset(i);
     }
@@ -144,8 +146,8 @@ class BitVectorPTS {
     return ptsVec[id].count();
   }
 
-  static inline const PtsTy& getPointedBy(NodeID id) {
-    llvm_unreachable("not supported by BitVectorPTS, use PointedByPts instead ");
+  static inline const PtsTy& getPointedBy(NodeID /*id*/) {
+    llvm_unreachable("not supported by BitVectorPTS, use PointedByPts instead");
   }
 
   // TODO: simply traverse the whole points-to information to gather the
@@ -158,5 +160,3 @@ class BitVectorPTS {
 }  // namespace pta
 
 DEFINE_PTS_TRAIT(pta::BitVectorPTS)
-
-#endif
