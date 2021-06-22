@@ -530,6 +530,7 @@ class ConsGraphBuilder : public llvm::CtxInstVisitor<ctx, SubClass>, public PtrN
       }
 
 #endif
+
       CGPtrNode<ctx> *srcNode = this->getOrCreatePtrNode(context, operand);
       CGPtrNode<ctx> *dstNode = this->getOrCreatePtrNode(context, I.getPointerOperand());
       consGraph->addConstraints(srcNode, dstNode, Constraints::store);
