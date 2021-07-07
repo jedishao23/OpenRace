@@ -107,7 +107,7 @@ TEST_CASE("dataracebench", "[integration][dataracebench][omp]") {
       Oracle("DRB056-jacobi2d-tile-no.ll", {}),
       Oracle("DRB057-jacobiinitialize-orig-no.ll", {}),
       Oracle("DRB058-jacobikernel-orig-no.ll", {}),
-      // 59 FP caused by last private??
+      Oracle("DRB059-lastprivate-orig-no.ll", {}),
       Oracle("DRB060-matrixmultiply-orig-no.ll", {}),
       Oracle("DRB061-matrixvector1-orig-no.ll", {}),
       Oracle("DRB062-matrixvector2-orig-no.ll", {}),
