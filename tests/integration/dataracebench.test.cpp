@@ -370,8 +370,5 @@ TEST_LL("DRB159", "DRB159-nobarrier-orig-gpu-no.ll", NORACE)
 // TEST_LL("DRB169", /*TODO*/, EXPECTED(/*TODO*/))
 
 TEST_LL("DRB170", "DRB170-nestedloops-orig-no.ll", NORACE)
-
-// 171 threadprivate // crash
-// TEST_LL("DRB171", /*TODO*/, EXPECTED(/*TODO*/))
-
+TEST_LL("DRB171", "DRB171-threadprivate3-orig-no.ll", NORACE)
 TEST_LL("DRB172", "DRB172-critical2-orig-no.ll", NORACE)

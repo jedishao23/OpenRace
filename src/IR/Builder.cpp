@@ -26,7 +26,10 @@ extern llvm::cl::opt<bool> DEBUG_PTA;
 
 namespace {
 
+// return true if the operand of inst must be a thread local object
 bool hasThreadLocalOperand(const llvm::Instruction *inst) {
+  // this is just a lightweight check during IR phase
+  // the full check is done at analysis time by ThreadLocalAnalysis
   auto ptr = getPointerOperand(inst);
   assert(ptr);
   if (auto global = llvm::dyn_cast<llvm::GlobalVariable>(ptr)) {
