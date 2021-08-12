@@ -13,6 +13,7 @@ limitations under the License.
 
 #include <llvm/Analysis/PostDominators.h>
 #include <llvm/Analysis/ScopedNoAliasAA.h>
+#include <llvm/IR/Operator.h>
 #include <llvm/Support/CommandLine.h>
 
 #include "IR/IRImpls.h"
@@ -101,10 +102,8 @@ std::shared_ptr<const FunctionSummary> generateFunctionSummary(const llvm::Funct
           continue;
         }
 
-        auto calledFunc = callInst->getCalledFunction();
-        if (calledFunc == nullptr || !calledFunc->hasName()) {
-          // TODO: Log warning
-          llvm::errs() << "could not find called func: " << *callInst << "\n";
+        auto calledFunc = CallIR::resolveTargetFunction(callInst);
+        if (calledFunc == nullptr || calledFunc->isIntrinsic() || calledFunc->isDebugInfoForProfiling()) {
           continue;
         }
 
