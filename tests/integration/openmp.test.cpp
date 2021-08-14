@@ -72,7 +72,10 @@ TEST_LL("get-thread-num-no", "get-thread-num-no.ll", NORACE)
 TEST_LL("get-thread-num-yes", "get-thread-num-yes.ll",
         EXPECTED("get-thread-num-yes.c:12:14 get-thread-num-yes.c:12:14",
                  "get-thread-num-yes.c:12:14 get-thread-num-yes.c:12:14"))
-// TEST_LL("get-thread-num-interproc-no", "get-thread-num-interproc-no.ll", NORACE) cannot handle interproc yet
+TEST_LL("get-thread-num-interproc-no", "get-thread-num-interproc-no.ll", NORACE)
+TEST_LL("get-thread-num-interproc-no2", "get-thread-num-interproc-no2.ll", NORACE)
+TEST_LL("get-thread-num-interproc-yes", "get-thread-num-interproc-yes.ll",
+        EXPECTED("get-thread-num-interproc-yes.c:4:44 get-thread-num-interproc-yes.c:4:44"))
 TEST_LL("get-thread-num-loop-no", "get-thread-num-loop-no.ll", NORACE)
 TEST_LL("get-thread-num-nested-branch-no", "get-thread-num-nested-branch-no.ll", NORACE)
 TEST_LL("get-thread-num-double-no", "get-thread-num-double-no.ll", NORACE)
@@ -93,7 +96,7 @@ TEST_LL("task-single-yes", "task-single-yes.ll", EXPECTED("task-single-yes.c:15:
 TEST_LL("task-master-single-yes", "task-master-single-yes.ll",
         EXPECTED("task-master-single-yes.c:18:14 task-master-single-yes.c:14:16",
                  "task-master-single-yes.c:14:16 task-master-single-yes.c:18:14"))
-TEST_LL("task-tid-no", "task-tid-no.ll", EXPECTED("task-tid-no.c:15:16 task-tid-no.c:15:16"))
+TEST_LL("task-tid-no", "task-tid-no.ll", NORACE)
 TEST_LL("task-yes", "task-yes.ll", EXPECTED("task-yes.c:13:14 task-yes.c:13:14"))
 
 // threadlocal

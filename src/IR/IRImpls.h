@@ -429,4 +429,7 @@ using OpenMPGetThreadNum = CallIRImpl<IR::Type::OpenMPGetThreadNum>;
 
 using OpenMPTaskWait = CallIRImpl<IR::Type::OpenMPTaskWait>;
 
+using OpenMPGetThreadNumGuardStart = CallIRImpl<IR::Type::OpenMPGetThreadNumGuardStart>;
+using OpenMPGetThreadNumGuardEnd = CallIRImpl<IR::Type::OpenMPGetThreadNumGuardEnd>;
+
 }  // namespace race

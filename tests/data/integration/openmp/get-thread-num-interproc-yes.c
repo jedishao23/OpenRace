@@ -1,8 +1,7 @@
 #include <omp.h>
 #include <stdio.h>
 
-void write_val2(int *dest, int val) { *dest = val; }
-void write_val(int *dest, int val) { write_val2(dest, val); }
+void write_val(int *dest, int val) { *dest = val; }
 
 int main() {
   int counter = 0;
@@ -14,6 +13,7 @@ int main() {
     if (tid == 1) {
       write_val(&counter, tid);
     }
+    write_val(&counter, tid);
   }
 
   printf("%d\n", counter);

@@ -11,6 +11,7 @@ set(pta-lib-sources
     PreProcessing/Passes/OMPConstantPropPass.cpp
     PreProcessing/Passes/RemoveExceptionHandlerPass.cpp
     PreProcessing/Passes/DuplicateOpenMPForks.cpp
+    PreProcessing/Passes/InsertFakeCallForGuardBlocks.cpp
     PointerAnalysis/Models/MemoryModel/Canonicalizer.cpp
     PointerAnalysis/Models/MemoryModel/DefaultHeapModel.cpp
     PointerAnalysis/Models/MemoryModel/FieldSensitive/Layout/Util.cpp
@@ -18,8 +19,7 @@ set(pta-lib-sources
     PointerAnalysis/Models/MemoryModel/CppMemModel/PreprocessingPasses/RewriteModeledAPIPass.cpp
     PointerAnalysis/Models/MemoryModel/CppMemModel/SpecialObject/Vector.cpp
     PointerAnalysis/Models/MemoryModel/CppMemModel/SpecialObject/VTablePtr.cpp
-    PointerAnalysis/Models/LanguageModel/DefaultLangModel/DefaultLangModel.cpp
-)
+    PointerAnalysis/Models/LanguageModel/DefaultLangModel/DefaultLangModel.cpp)
 
 add_library(pta STATIC ${pta-lib-sources})
 target_link_libraries(pta ${llvm_libs} pthread)
@@ -41,6 +41,7 @@ endif()
 
 set(racedetect-lib-sources
     LanguageModel/RaceModel.cpp
+    Analysis/OpenMP/OpenMP.cpp
     Analysis/HappensBeforeGraph.cpp
     Analysis/LockSet.cpp
     Analysis/SharedMemory.cpp

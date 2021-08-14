@@ -73,9 +73,6 @@ std::shared_ptr<const FunctionSummary> generateFunctionSummary(const llvm::Funct
   FunctionSummary summary;
 
   for (auto const &basicblock : func.getBasicBlockList()) {
-    if (DEBUG_PTA) {
-      llvm::outs() << "bb: " << basicblock.getName() << "\n";
-    }
     for (auto it = basicblock.begin(), end = basicblock.end(); it != end; ++it) {
       auto inst = llvm::cast<llvm::Instruction>(it);
 
@@ -163,6 +160,10 @@ std::shared_ptr<const FunctionSummary> generateFunctionSummary(const llvm::Funct
           summary.push_back(std::make_shared<OpenMPUnsetLock>(callInst));
         } else if (OpenMPModel::isGetThreadNum(funcName)) {
           summary.push_back(std::make_shared<OpenMPGetThreadNum>(callInst));
+        } else if (OpenMPModel::isGetThreadNumGuardStart(funcName)) {
+          summary.push_back(std::make_shared<OpenMPGetThreadNumGuardStart>(callInst));
+        } else if (OpenMPModel::isGetThreadNumGuardEnd(funcName)) {
+          summary.push_back(std::make_shared<OpenMPGetThreadNumGuardEnd>(callInst));
         } else if (OpenMPModel::isOrderedStart(funcName)) {
           summary.push_back(std::make_shared<OpenMPOrderedStart>(callInst));
         } else if (OpenMPModel::isOrderedEnd(funcName)) {

@@ -47,7 +47,7 @@ bool isOpenMPMasterThread(const ThreadTrace &thread) {
   return ompThread->isForkingMaster();
 }
 
-// handle omp single/master events
+// handle omp single/master events and other omp events
 // return true if the current instruction should be skipped
 bool handleOMPEvents(const CallIR *callIR, TraceBuildState &state, bool isMasterThread) {
   switch (callIR->type) {
@@ -130,7 +130,7 @@ void traverseCallNode(const pta::CallGraphNodeTy *node, ThreadTrace &thread, Cal
   callstack.push(func);
 
   if (DEBUG_PTA) {
-    llvm::outs() << "Generating Func Sum: TID: " << thread.id << " Func: " << func->getName() << "\n";
+    llvm::outs() << "\nGenerating Func Sum: TID: " << thread.id << " Func: " << func->getName() << "\n";
   }
 
   auto const &summary = *state.builder.getFunctionSummary(func);
@@ -183,7 +183,6 @@ void traverseCallNode(const pta::CallGraphNodeTy *node, ThreadTrace &thread, Cal
       // TODO: log if entries contained more than one possible entry
       auto entry = entries.front();
 
-      auto const threadPosition = threads.size();
       // build thread trace for this fork and all sub threads
       auto childThread = std::make_unique<ThreadTrace>(forkEvent, entry, state);
       threads.push_back(std::move(childThread));

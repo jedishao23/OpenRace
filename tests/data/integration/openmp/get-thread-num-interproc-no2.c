@@ -13,6 +13,8 @@ int main() {
 
     if (tid == 1) {
       write_val(&counter, tid);
+      int tid2 = omp_get_thread_num();
+      printf("%d\n", tid2);
     }
   }
 

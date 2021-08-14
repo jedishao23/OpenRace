@@ -218,7 +218,7 @@ struct ArrayAccess {
     }
 
     llvm::StringRef rootIdx;
-    int i = 0;
+    unsigned int i = 0;
     while (i < geps.size()) {
       auto gep = geps[i];
       auto idx = gep->getOperand(gep->getNumOperands() - 1);

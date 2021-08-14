@@ -44,7 +44,7 @@ class ReadEventImpl : public ReadEvent {
   const EventID id;
 
   ReadEventImpl(std::shared_ptr<const ReadIR> read, std::shared_ptr<EventInfo> info, EventID id)
-      : info(std::move(info)), read(std::move(read)), id(id), accessedMemory({}) {
+      : info(std::move(info)), accessedMemory({}), read(std::move(read)), id(id) {
     this->info->thread->program.pta.getPointsTo(this->info->context, this->read->getAccessedValue(), accessedMemory);
   }
 
@@ -65,7 +65,7 @@ class WriteEventImpl : public WriteEvent {
   const EventID id;
 
   WriteEventImpl(std::shared_ptr<const WriteIR> write, std::shared_ptr<EventInfo> info, EventID id)
-      : info(std::move(info)), write(std::move(write)), id(id), accessedMemory({}) {
+      : info(std::move(info)), accessedMemory({}), write(std::move(write)), id(id) {
     this->info->thread->program.pta.getPointsTo(this->info->context, this->write->getAccessedValue(), accessedMemory);
   }
 
