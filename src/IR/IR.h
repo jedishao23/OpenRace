@@ -32,10 +32,14 @@ class IR {
     Fork,
     PthreadCreate,
     OpenMPFork,
+    OpenMPTaskFork,
+    OpenMPForkTeams,
     END_Fork,
     Join,
     PthreadJoin,
     OpenMPJoin,
+    OpenMPTaskJoin,
+    OpenMPJoinTeams,
     END_Join,
     Lock,
     PthreadMutexLock,
@@ -66,7 +70,10 @@ class IR {
     OpenMPMasterStart,
     OpenMPMasterEnd,
     OpenMPGetThreadNum,
-    END_Call
+    OpenMPTaskWait,
+    OpenMPGetThreadNumGuardStart,
+    OpenMPGetThreadNumGuardEnd,
+    END_Call,
   } type;
   [[nodiscard]] virtual const llvm::Instruction *getInst() const = 0;
 
@@ -220,6 +227,10 @@ class CallIR : public IR {
   [[nodiscard]] inline const llvm::CallBase *getInst() const override { return inst; }
 
   [[nodiscard]] inline bool isIndirect() const { return inst->isIndirectCall(); }
+
+  [[nodiscard]] virtual const llvm::Function *getCalledFunction() const { return resolveTargetFunction(getInst()); }
+
+  static llvm::Function *resolveTargetFunction(const llvm::CallBase *callInst);
 
   // Used for llvm style RTTI (isa, dyn_cast, etc.)
   static bool classof(const IR *e) { return e->type >= Type::Call && e->type < Type::END_Call; }

@@ -11,15 +11,14 @@ limitations under the License.
 
 #include "RaceDetect.h"
 
-#include <llvm/Analysis/ScopedNoAliasAA.h>
-
 #include "Analysis/HappensBeforeGraph.h"
 #include "Analysis/LockSet.h"
 #include "Analysis/OpenMPAnalysis.h"
 #include "Analysis/SharedMemory.h"
 #include "Analysis/SimpleAlias.h"
+#include "Analysis/ThreadLocalAnalysis.h"
 #include "LanguageModel/RaceModel.h"
-#include "PreProcessing/PreProcessing.h"
+#include "Statistics/Coverage.h"
 #include "Trace/ProgramTrace.h"
 
 using namespace race;
@@ -38,11 +37,16 @@ Report race::detectRaces(llvm::Module *module, DetectRaceConfig config) {
     }
   }
 
+  if (config.printTrace) {
+    llvm::outs() << program << "\n";
+  }
+
   race::SharedMemory sharedmem(program);
   race::HappensBeforeGraph happensbefore(program);
   race::LockSet lockset(program);
   race::SimpleAlias simpleAlias;
   race::OpenMPAnalysis ompAnalysis(program);
+  race::ThreadLocalAnalysis threadlocal;
 
   race::Reporter reporter;
 
@@ -56,9 +60,21 @@ Report race::detectRaces(llvm::Module *module, DetectRaceConfig config) {
   // Adds to report if race is detected between write and other
   auto checkRace = [&](const race::WriteEvent *write, const race::MemAccessEvent *other) {
     if (DEBUG_PTA) {
-      llvm::outs() << "Checking Race: " << write->getID() << " " << other->getID() << "\n";
+      llvm::outs() << "Checking Race: " << write->getID() << "(TID " << write->getThread().id << ") "
+                   << "(line" << write->getIRInst()->getInst()->getDebugLoc().getLine()  // DRB149 crash on this line
+                   << " col" << write->getIRInst()->getInst()->getDebugLoc().getCol() << ")"
+                   << " " << other->getID() << "(TID " << other->getThread().id << ") "
+                   << "(line" << other->getIRInst()->getInst()->getDebugLoc().getLine() << " col"
+                   << other->getIRInst()->getInst()->getDebugLoc().getCol() << ")"
+                   << "\n";
+      llvm::outs() << " (IR: " << *write->getInst() << "\n\t" << *other->getInst() << ")\n";
     }
+
     if (!happensbefore.areParallel(write, other) || lockset.sharesLock(write, other)) {
+      return;
+    }
+
+    if (threadlocal.isThreadLocalAccess(write, other)) {
       return;
     }
 
@@ -72,22 +88,32 @@ Report race::detectRaces(llvm::Module *module, DetectRaceConfig config) {
       //  #pragma omp parallel for shared(A)
       //  for (int i = 0; i < N: i++) { A[i] = i; }
       // even though A is shared, each index is unique so there is no race
-      if (ompAnalysis.isLoopArrayAccess(write, other) && !ompAnalysis.canIndexOverlap(write, other)) {
+      if (ompAnalysis.isNonOverlappingLoopAccess(write, other)) {
         return;
       }
 
       // Certain omp blocks cannot race with themselves or those of the same type within the same scope/team
       if (ompAnalysis.inSameSingleBlock(write, other) || ompAnalysis.inSameReduce(write, other) ||
-          ompAnalysis.bothInMasterBlock(write, other) || race::OpenMPAnalysis::insideCompatibleSections(write, other)) {
+          race::OpenMPAnalysis::insideCompatibleSections(write, other)) {
         return;
       }
 
       // No race if guaranteed to be executed by same thread
-      if (ompAnalysis.guardedBySameTid(write, other)) return;
+      if (ompAnalysis.guardedBySameTID(write, other)) return;
+
+      // Lastprivate code will only be executed by one thread
+      // Model lastprivate by assuming lastprivate code cannot race with other last private code
+      // This may miss races according to OpenMP specification,
+      //  but will not miss races according to how Clang generates OpenMP code (as of clang 10.0.1)
+      if (ompAnalysis.isInLastprivate(write) && ompAnalysis.isInLastprivate(other)) return;
     }
 
     // Race detected
     reporter.collect(write, other);
+
+    if (DEBUG_PTA) {
+      llvm::outs() << " ... is race\n";
+    }
   };
 
   for (auto const sharedObj : sharedmem.getSharedObjects()) {
@@ -119,7 +145,18 @@ Report race::detectRaces(llvm::Module *module, DetectRaceConfig config) {
     }
   }
 
-  llvm::outs() << program << "\n";
+  if (DEBUG_PTA) {
+    happensbefore.debugDump(llvm::outs());
+  }
+
+  if (DEBUG_PTA) {
+    happensbefore.debugDump(llvm::outs());
+  }
+
+  if (config.doCoverage) {
+    race::Coverage coverage(program);
+    llvm::outs() << coverage << "\n";
+  }
 
   return reporter.getReport();
 }
